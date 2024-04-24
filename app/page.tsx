@@ -5,12 +5,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehype from "rehype-raw";
 import Sidebar from "@/components/sidebar";
+import axios from "axios";
 export interface ChatInterface {
-  msg: string;
-  attachment_name?: string;
-  isSender: boolean;
-  sender: string;
-  message_id?: string;
+  role: string;
+  content?: string;
+  isSender?: boolean;
+  sender?: string;
 }
 
 export interface ModelInterface {
@@ -56,6 +56,21 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   let abortController = useRef(new AbortController());
+  const [threadListLoader, setThreadListLoader] = useState(false);
+  const [threadList, setThreadList] = useState([] as any[]);
+  const [threadID, setThreadID] = useState("");
+
+  useEffect(() => {
+    setThreadListLoader(true);
+    axios
+      .get("/api/listThreads")
+      .then((res) => {
+        if (res?.data?.success === false)
+          return alert("Failed to fetch thread list");
+        setThreadList(res?.data?.data ?? []);
+      })
+      .finally(() => setThreadListLoader(false));
+  }, []);
 
   const stopGenerating = () => {
     if (abortController?.current?.abort) {
@@ -73,16 +88,16 @@ export default function Home() {
       setLoading(false);
       setAnswer("");
     });
-    // const url = `${}`;
 
-    const response = await fetch("", {
+    const response = await fetch("/api/chats", {
       method: "POST",
       signal: abortController.current?.signal,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: "/blitz " + searchValue,
+        threadID: threadID,
+        searchValue: searchValue,
       }),
     });
     if (!response.ok) {
@@ -139,30 +154,48 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (
-      !chats[chats.length - 1]?.isSender &&
-      chats[chats.length - 1]?.msg === ""
-    )
-      handleSearch();
-  }, [chats]);
-
-  useEffect(() => {
     scrollToBottom();
     if (answer !== "" && chats.length) {
       let tempChats = [...chats];
-      tempChats[tempChats.length - 1].msg = answer;
+      tempChats[tempChats.length - 1].content = answer;
       setChats(tempChats);
     }
   }, [answer, loading]);
+
+  useEffect(() => {
+    if (!threadID) return;
+    axios
+      .get("/api/chats?threadID=" + threadID)
+      .then((res) => {
+        if (res?.data?.success === false) return alert(res?.data?.data);
+        setChats(res?.data?.data ?? []);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  }, [threadID]);
+
   return (
     <div className="w-screen h-screen flex prose-nbx">
       <div className="fixed top-[0px] border-b-[1px] bg-light-background-interactive dark:bg-dark-background-interactive border-light-border-base dark:border-dark-border-base py-[8px] w-full m-auto ">
         <span className="medium font-[600] text-light-text-onColorr dark:text-dark-text-onColorr text-center flex justify-center items-center">
-          headingnwkfjnkjehjkfhgkj
+          {threadList
+            ?.find((thread) => thread.id === threadID)
+            ?.title.charAt(0)
+            .toUpperCase() +
+            threadList
+              ?.find((thread) => thread.id === threadID)
+              ?.title.slice(1) || "ChatApp"}
         </span>
       </div>
-      <div className=" h-full ">
-        <Sidebar />
+      <div className="h-full">
+        <Sidebar
+          threadListLoader={threadListLoader}
+          threadList={threadList}
+          threadID={threadID}
+          setThreadID={setThreadID}
+          setChats={setChats}
+        />
       </div>
       <div className="w-full h-full flex flex-col pb-[16px] pt-[66px] px-[36px] justify-between  mx-auto">
         <div className="chatsHolder w-full flex flex-col gap-[16px] overflow-scroll pb-[16px]">
@@ -172,7 +205,7 @@ export default function Home() {
               key={id}
               loading={
                 id === chats?.length - 1
-                  ? !chats?.[chats?.length - 1]?.msg && loading
+                  ? !chats?.[chats?.length - 1]?.content && loading
                   : false
               }
             />
@@ -188,12 +221,14 @@ export default function Home() {
                     setChats((prev) => [
                       ...prev,
                       {
-                        msg: val,
+                        role: "user",
+                        content: val,
                         isSender: true,
                         sender: "You",
                       },
                       {
-                        msg: "",
+                        role: "assistant",
+                        content: "",
                         isSender: false,
                         sender: "TuneStudio",
                       },
@@ -223,12 +258,14 @@ export default function Home() {
                 setChats((prev) => [
                   ...prev,
                   {
-                    msg: search,
+                    role: "user",
+                    content: search,
                     isSender: true,
                     sender: "You",
                   },
                   {
-                    msg: "",
+                    role: "assistant",
+                    content: "",
                     isSender: false,
                     sender: "TuneStudio",
                   },
@@ -244,7 +281,12 @@ export default function Home() {
             endIcon={
               !loading ? (
                 <div className="flex gap-[18px] mb-[8px] right-[10px] w-[100px] relative">
-                  <div className="w-[16px]">
+                  <div
+                    className="w-[16px]"
+                    onClick={() => {
+                      setSearch("");
+                    }}
+                  >
                     <Send className="fill-light-icon-base dark:fill-dark-icon-base hover:dark:fill-dark-icon-hover hover:fill-light-icon-hover" />
                   </div>
                 </div>
@@ -267,12 +309,14 @@ export default function Home() {
               setChats((prev) => [
                 ...prev,
                 {
-                  msg: search,
+                  role: "user",
+                  content: search,
                   isSender: true,
                   sender: "You",
                 },
                 {
-                  msg: "",
+                  role: "assistant",
+                  content: "",
                   isSender: false,
                   sender: "TuneStudio",
                 },
@@ -307,7 +351,7 @@ const MessageCard = ({
       </div>
       <div className="p-[8px] rounded-md w-full bg-light-background-surfaceLow dark:bg-dark-background-surfaceHigh flex flex-col">
         <span className="mini text-light-text-subtle dark:text-dark-text-subtle ">
-          {chat?.sender}
+          {chat?.role}
         </span>
         {!loading ? (
           <ReactMarkdown
@@ -322,7 +366,7 @@ const MessageCard = ({
               ),
             }}
           >
-            {chat.msg}
+            {chat.content}
           </ReactMarkdown>
         ) : (
           <div className="h-[16px] w-[2px] bg-light-text-subtle dark:bg-dark-text-subtle animate-pulse"></div>

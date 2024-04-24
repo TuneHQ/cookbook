@@ -1,26 +1,31 @@
 import SvgPlus from "chainfury/dist/esm/Icons/Plus";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
-const Sidebar = () => {
-  const [threadListLoader, setThreadListLoader] = useState(false);
-  const [threadList, setThreadList] = useState([] as any[]);
+import ChatList from "@/app/Svgcomps/ChatList";
+import { useRouter } from "next/navigation";
 
-  useEffect(() => {
-    setThreadListLoader(true);
-    axios
-      .get("/api/listThreads")
-      .then((res) => {
-        if (res?.data?.success === false)
-          return alert("Failed to fetch thread list");
-        setThreadList(res?.data?.data ?? []);
-      })
-      .finally(() => setThreadListLoader(false));
-  }, []);
-
+const Sidebar = ({
+  threadList,
+  threadListLoader,
+  threadID,
+  setThreadID,
+  setChats,
+}: {
+  threadList: any[];
+  threadListLoader: boolean;
+  threadID: string;
+  setThreadID: (threadID: string) => void;
+  setChats: (chats: any[]) => void;
+}) => {
+  const router = useRouter();
   return (
     <div className="w-[240px] min-w-[240px] h-full border-r border-light-border-base dark:border-dark-border-base pb-[16px] pt-[66px] px-[14px] flex flex-col gap-[8px] ">
-      <button className="flex items-center primaryBtn p-[8px] text-left w-full rounded-md small font-[600]">
+      <button
+        className="flex items-center primaryBtn p-[8px] text-left w-full rounded-md small font-[600]"
+        onClick={() => {
+          setThreadID("");
+          setChats([]);
+        }}
+      >
         <SvgPlus className="w-[16px] h-[16px] mr-[8px] fill-light-icon-onColor dark:fill-dark-icon-onColor" />
         New Chat
       </button>
@@ -32,8 +37,14 @@ const Sidebar = () => {
         {threadList.map((thread, index) => (
           <div
             key={index}
-            className=" w-full px-[10px] py-[4px] rounded-md overflow-hidden text-ellipsis whitespace-nowrap"
+            className="flex items-center gap-[4px] cursor-pointer hover:bg-light-background-appHover hover:dark:bg-dark-background-appHover w-full px-[10px] py-[4px] rounded-md overflow-hidden text-ellipsis whitespace-nowrap"
+            onClick={() => setThreadID(thread.id)}
           >
+            <ChatList
+              className={`iconBase min-w-[16px] ${
+                threadListLoader ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+            />
             <span className="medium textMuted">
               {thread?.title.charAt(0).toUpperCase()}
               {thread?.title.slice(1)}
