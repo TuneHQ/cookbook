@@ -2,6 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
+import time
 
 def clean_text(text):
     # Remove extra newlines and spaces

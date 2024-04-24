@@ -8,6 +8,7 @@ fastapi = "*"
 uvicorn = "*"
 beautifulsoup4 = "*"
 requests = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
