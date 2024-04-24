@@ -7,19 +7,35 @@ import time
 from openai import OpenAI
 from supabase import create_client, Client
 
-def generate_embedding(text, model="text-embedding-3-small"):
+def generate_embedding(text):
     url: str = os.environ.get("SUPABASE_URL")
     key: str = os.environ.get("SUPABASE_KEY")
     supabase: Client = create_client(url, key)
-    client = OpenAI()
     text = text.replace("\n", " ")
-    embedding = client.embeddings.create(input = [text], model=model).data[0].embedding
-    document = supabase.table('documents').insert({
+    embedding = get_embedding(text)
+    supabase.table('documents').insert({
         "content": text,
         "embedding": embedding,
     }).execute()
-    print(document)
+
+def get_embedding(query, model="text-embedding-3-small"):
+    client = OpenAI()
+    query = query.replace("\n", " ")
+    embedding = client.embeddings.create(input = [query], model=model).data[0].embedding
     return embedding
+
+def search_documents(query, model="text-embedding-3-small"):
+    url: str = os.environ.get("SUPABASE_URL")
+    key: str = os.environ.get("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
+    embedding = get_embedding(query, model)
+    matches = supabase.rpc('match_documents',{
+        "query_embedding" : embedding,
+        "match_threshold" : 0.1,
+        "match_count" : 5   
+    }).execute()
+    print(matches, "matches",embedding)
+    return matches
 
 def clean_text(text):
     # Remove extra newlines and spaces
@@ -35,9 +51,6 @@ def clean_text(text):
     return cleaned_text.strip()
 
 def extract_website_data(url, start_time=0, level=0, max_level=3, visited_urls=None, host=None):
-    embedding = generate_embedding("hello")
-    print(embedding)
-    return []
     if visited_urls is None:
         visited_urls = set()
     if time.time() - start_time > 40:
