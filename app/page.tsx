@@ -4,6 +4,7 @@ import { Pause, Send, TextArea } from "chainfury";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehype from "rehype-raw";
+import Sidebar from "@/components/sidebar";
 export interface ChatInterface {
   msg: string;
   attachment_name?: string;
@@ -154,8 +155,16 @@ export default function Home() {
     }
   }, [answer, loading]);
   return (
-    <div className="w-screen h-screen">
-      <div className="flex flex-col h-full justify-between max-w-[1100px] mx-auto prose-nbx p-[16px]">
+    <div className="w-screen h-screen flex prose-nbx">
+      <div className="fixed top-[0px] border-b-[1px] bg-light-background-interactive dark:bg-dark-background-interactive border-light-border-base dark:border-dark-border-base py-[8px] w-full m-auto ">
+        <span className="medium font-[600] text-light-text-onColorr dark:text-dark-text-onColorr text-center flex justify-center items-center">
+          headingnwkfjnkjehjkfhgkj
+        </span>
+      </div>
+      <div className=" h-full ">
+        <Sidebar />
+      </div>
+      <div className="w-full h-full flex flex-col pb-[16px] pt-[66px] px-[36px] justify-between  mx-auto">
         <div className="chatsHolder w-full flex flex-col gap-[16px] overflow-scroll pb-[16px]">
           {chats?.map((chat, id) => (
             <MessageCard
@@ -231,10 +240,10 @@ export default function Home() {
             data-enable-grammarly="false"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Ask anything"
-            className="min-h-[40px!important] pb-[8px] pr-[8px] max-h-[200px] outline-none"
+            className="min-h-[40px!important] pb-[8px] max-h-[200px] outline-none"
             endIcon={
               !loading ? (
-                <div className="flex gap-[18px] mb-[8px] w-[100px] relative">
+                <div className="flex gap-[18px] mb-[8px] right-[10px] w-[100px] relative">
                   <div className="w-[16px]">
                     <Send className="fill-light-icon-base dark:fill-dark-icon-base hover:dark:fill-dark-icon-hover hover:fill-light-icon-hover" />
                   </div>

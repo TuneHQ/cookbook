@@ -7,7 +7,7 @@ body {
   font-family: "proxima-nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
-  @apply dark:text-dark-text-base dark:bg-dark-background-app bg-light-background-app  text-light-text-base h-screen w-screen antialiased;
+  @apply dark:text-dark-text-base dark:bg-dark-background-app bg-light-background-app  text-light-text-base h-screen w-screen antialiased overflow-hidden;
 }
 
 *::-webkit-scrollbar {
