@@ -1,11 +1,18 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Pause, Send, TextArea } from "chainfury";
+import { Send, TextArea } from "chainfury";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehype from "rehype-raw";
 import Sidebar from "@/components/sidebar";
 import axios from "axios";
+const {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} = require("unique-names-generator");
+
 export interface ChatInterface {
   role: string;
   content?: string;
@@ -29,7 +36,6 @@ export interface ModelInterface {
 const scrollToBottom = (force = false) => {
   const chatsHolder = document.querySelector(".chatsHolder");
   if (!chatsHolder) return;
-  // check if user is already at the bottom of the chatsHolder
   const isAtBottom =
     chatsHolder.scrollHeight - 40 - chatsHolder.scrollTop <=
     chatsHolder.clientHeight;
@@ -42,25 +48,40 @@ const scrollToBottom = (force = false) => {
 };
 
 const faqs = [
-  "Question 1?",
-  "Question 2?",
-  "Question 3?",
-  "Question 4?",
-  "Question 5?",
-  "Question 6?",
+  "Explore today's top news stories",
+  "How to build resume?",
+  "What led to the extinction of dinosaurs?",
+  "Generate LinkedIn content ideas on financial markets",
 ];
 
 export default function Home() {
   const [chats, setChats] = useState<ChatInterface[]>([]);
-  const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  let abortController = useRef(new AbortController());
   const [threadListLoader, setThreadListLoader] = useState(false);
   const [threadList, setThreadList] = useState([] as any[]);
   const [threadID, setThreadID] = useState("");
 
   useEffect(() => {
+    getThreadList();
+  }, []);
+
+  useEffect(() => {
+    if (!threadID) return;
+    setThreadListLoader(true);
+    axios
+      .get("/api/chats?threadID=" + threadID)
+      .then((res) => {
+        if (res?.data?.success === false) return alert(res?.data?.data);
+        setChats(res?.data?.data ?? []);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      })
+      .finally(() => setThreadListLoader(false));
+  }, [threadID]);
+
+  function getThreadList() {
     setThreadListLoader(true);
     axios
       .get("/api/listThreads")
@@ -70,110 +91,62 @@ export default function Home() {
         setThreadList(res?.data?.data ?? []);
       })
       .finally(() => setThreadListLoader(false));
-  }, []);
+  }
 
-  const stopGenerating = () => {
-    if (abortController?.current?.abort) {
-      abortController?.current.abort();
+  function createthreadID() {
+    if (!threadID) {
+      const randomName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+        separator: " ",
+      });
+      axios
+        .post("/api/threadID", {
+          title: randomName,
+        })
+        .then((res) => {
+          setThreadID(res.data?.data?.id);
+          handleSearch(res.data?.data?.id);
+          getThreadList();
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
     }
-  };
+  }
 
-  const handleSearch = async () => {
+  const handleSearch = async (id: string) => {
+    setLoading(true);
+    if (id === "" && !threadID) {
+      await createthreadID();
+      return;
+    }
     const searchValue = search.trim();
     setSearch("");
-    if (loading) return;
-    setLoading(true);
-    abortController.current = new AbortController();
-    abortController.current.signal.addEventListener("abort", () => {
-      setLoading(false);
-      setAnswer("");
-    });
 
-    const response = await fetch("/api/chats", {
-      method: "POST",
-      signal: abortController.current?.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        threadID: threadID,
-        searchValue: searchValue,
-      }),
-    });
-    if (!response.ok) {
-      alert("Something went wrong, please try again later.");
-      setLoading(false);
-      return;
-    }
-    if (!response?.headers?.get("content-type")) {
-      const text = await response.text();
-      setAnswer(text);
-      setLoading(false);
-      setTimeout(() => {
-        setAnswer("");
-      }, 10000);
-      return;
-    }
-
-    const reader = response?.body?.getReader();
-    let decoder = new TextDecoder();
-
-    let message = "";
-    while (true && reader) {
-      const chunkReader = await reader.read();
-      console.log({ chunkReader });
-      const { done, value } = chunkReader;
-      if (done) {
-        break;
-      }
-
-      const text = decoder.decode(value);
-      const lines = text.trim().split("\n\n\n\n\n");
-
-      for (const line of lines) {
-        const eventData = JSON.parse(line);
-        if (eventData?.sources) continue;
-        if (eventData.error) {
-          // if eventData has error
-          console.log("error ->", eventData.error);
-          setLoading(false);
-          // show error
-          alert(eventData.error);
-          return;
+    const response = await axios
+      .post(
+        "/api/chats",
+        {
+          threadID: id,
+          content: searchValue,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        message = message + eventData.value;
-        setAnswer(message);
-      }
-    }
-    setAnswer(message);
-
-    setLoading(false);
-    setTimeout(() => {
-      setAnswer("");
-    });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-    if (answer !== "" && chats.length) {
-      let tempChats = [...chats];
-      tempChats[tempChats.length - 1].content = answer;
-      setChats(tempChats);
-    }
-  }, [answer, loading]);
-
-  useEffect(() => {
-    if (!threadID) return;
-    axios
-      .get("/api/chats?threadID=" + threadID)
-      .then((res) => {
-        if (res?.data?.success === false) return alert(res?.data?.data);
-        setChats(res?.data?.data ?? []);
-      })
+      )
       .catch((err: any) => {
         console.log(err);
+      })
+      .then((res: any) => {
+        console.log(res);
+        setChats(res?.data?.data ?? []);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }, [threadID]);
+  };
 
   return (
     <div className="w-screen h-screen flex prose-nbx">
@@ -190,6 +163,7 @@ export default function Home() {
       </div>
       <div className="h-full">
         <Sidebar
+          loading={loading}
           threadListLoader={threadListLoader}
           threadList={threadList}
           threadID={threadID}
@@ -218,21 +192,10 @@ export default function Home() {
               {faqs?.map((val, id) => (
                 <div
                   onClick={() => {
-                    setChats((prev) => [
-                      ...prev,
-                      {
-                        role: "user",
-                        content: val,
-                        isSender: true,
-                        sender: "You",
-                      },
-                      {
-                        role: "assistant",
-                        content: "",
-                        isSender: false,
-                        sender: "TuneStudio",
-                      },
-                    ]);
+                    setSearch(val);
+                    setThreadID("");
+                    setChats([]);
+                    handleSearch("");
                   }}
                   key={id}
                   className="revealCardAnimation medium p-[12px] border cursor-pointer rounded-[8px] border-light-border-base dark:border-dark-border-base w-full bg-light-background-surface dark:bg-dark-background-surface hover:bg-light-background-surfaceHover dark:hover:bg-dark-background-surfaceHover"
@@ -251,10 +214,6 @@ export default function Home() {
               if (e.key === "Enter" && e.shiftKey) return;
               if (e.key === "Enter" && !loading) {
                 e.preventDefault();
-                scrollToBottom(true);
-                setTimeout(() => {
-                  scrollToBottom(true);
-                }, 100);
                 setChats((prev) => [
                   ...prev,
                   {
@@ -270,6 +229,8 @@ export default function Home() {
                     sender: "TuneStudio",
                   },
                 ]);
+                scrollToBottom(true);
+                handleSearch(threadID);
               }
             }}
             data-gramm="false"
@@ -279,25 +240,23 @@ export default function Home() {
             placeholder="Ask anything"
             className="min-h-[40px!important] pb-[8px] max-h-[200px] outline-none"
             endIcon={
-              !loading ? (
-                <div className="flex gap-[18px] mb-[8px] right-[10px] w-[100px] relative">
-                  <div
-                    className="w-[16px]"
-                    onClick={() => {
-                      setSearch("");
-                    }}
-                  >
-                    <Send className="fill-light-icon-base dark:fill-dark-icon-base hover:dark:fill-dark-icon-hover hover:fill-light-icon-hover" />
-                  </div>
-                </div>
-              ) : (
+              <div className="flex gap-[18px] mb-[8px] right-[10px] w-[100px] relative">
                 <div
-                  onClick={() => stopGenerating()}
-                  className="w-[16px] flex mb-[8px] items-center text-light-icon-base dark:text-dark-icon-base hover:dark:text-dark-icon-hover hover:text-light-icon-hover"
+                  className={`w-[16px] ${
+                    loading || search?.trim() === ""
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                  onClick={() => {
+                    if (loading || search?.trim() === "") return;
+                    setChats((prev) => [...prev]);
+                    scrollToBottom(true);
+                    handleSearch(threadID);
+                  }}
                 >
-                  <Pause />
+                  <Send className="fill-light-icon-base dark:fill-dark-icon-base hover:dark:fill-dark-icon-hover hover:fill-light-icon-hover" />
                 </div>
-              )
+              </div>
             }
             onEndClick={() => {
               if (search?.trim() === "") return;
@@ -345,7 +304,11 @@ const MessageCard = ({
     <div className="flex gap-[16px] w-full">
       <div className="h-[30px] w-[30px] flex justify-center items-center rounded-full bg-light-background-surfaceHighHover dark:bg-dark-background-surfaceHighHover">
         <div
-          className="min-w-[38px] bg-[#FF6A1F] medium-pl h-[38px] w-[38px] scale-[0.67] flex rounded-full"
+          className={`min-w-[38px] ${
+            chat?.role === "assistant"
+              ? "bg-[#FF6A1F]"
+              : "bg-light-background-interactive dark:bg-dark-background-interactive"
+          }  medium-pl h-[38px] w-[38px] scale-[0.67] flex rounded-full`}
           style={{ background: "#FF6A1F" }}
         ></div>
       </div>
