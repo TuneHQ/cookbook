@@ -27,5 +27,5 @@ def resolve_prompt(request: Request):
     params = request.query_params
     prompt = params.get("query")
     search = search_documents(prompt)
-    print("Prompt:", search)
+    return search.data
     

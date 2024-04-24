@@ -20,23 +20,23 @@ def generate_embedding(text, target_url, title):
         "title": title
     }).execute()
 
-def get_embedding(query, model="text-embedding-3-small"):
+def get_embedding(query, model="text-embedding-ada-002"):
     client = OpenAI()
     query = query.replace("\n", " ")
     embedding = client.embeddings.create(input = [query], model=model).data[0].embedding
-    print("Embedding:", embedding)
     return embedding
 
-def search_documents(query, model="text-embedding-3-small"):
+def search_documents(query, model="text-embedding-ada-002"):
     url: str = os.environ.get("SUPABASE_URL")
     key: str = os.environ.get("SUPABASE_KEY")
     supabase: Client = create_client(url, key)
     embedding = get_embedding(query, model)
     matches = supabase.rpc('match_documents',{
         "query_embedding" : embedding,
-        "match_threshold" : 0.1,
-        "match_count" : 5   
+        "match_threshold" : 0.6,
+        "match_count" : 3
     }).execute()
+    
     return matches
 
 def clean_text(text):
