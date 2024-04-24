@@ -11,6 +11,9 @@ app = FastAPI()
 class DocumentBody(BaseModel):
     url : str = Field(..., title="URL of the website to extract data from")
 
+class SearchBody(BaseModel):
+    query: str
+
 @app.post("/add_documents")
 def read_root( document: DocumentBody):
     url = document.url
@@ -20,9 +23,9 @@ def read_root( document: DocumentBody):
     return {"urls_processed": len(urls), "time_taken": time.time() - start_time}
 
 
-@app.get("/prompt")
-def resolve_prompt(request: Request):
-    params = request.query_params
-    prompt = params.get("query")
+# curl -X POST -H "Content-Type: application/json" -d '{"query":"Your query here"}' http://localhost:8000/prompt
+@app.post("/prompt")
+def resolve_prompt(prompt: SearchBody):
+    prompt = prompt.query
     search = search_documents(prompt)
     return StreamingResponse(get_response_tunestudio(prompt, search.data),media_type="text/event-stream")
