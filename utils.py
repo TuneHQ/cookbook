@@ -7,7 +7,7 @@ import time
 from openai import OpenAI
 from supabase import create_client, Client
 
-def generate_embedding(text):
+def generate_embedding(text, target_url, title):
     url: str = os.environ.get("SUPABASE_URL")
     key: str = os.environ.get("SUPABASE_KEY")
     supabase: Client = create_client(url, key)
@@ -16,12 +16,15 @@ def generate_embedding(text):
     supabase.table('documents').insert({
         "content": text,
         "embedding": embedding,
+        "url": target_url,
+        "title": title
     }).execute()
 
 def get_embedding(query, model="text-embedding-3-small"):
     client = OpenAI()
     query = query.replace("\n", " ")
     embedding = client.embeddings.create(input = [query], model=model).data[0].embedding
+    print("Embedding:", embedding)
     return embedding
 
 def search_documents(query, model="text-embedding-3-small"):
@@ -34,7 +37,6 @@ def search_documents(query, model="text-embedding-3-small"):
         "match_threshold" : 0.1,
         "match_count" : 5   
     }).execute()
-    print(matches, "matches",embedding)
     return matches
 
 def clean_text(text):
@@ -53,10 +55,8 @@ def clean_text(text):
 def extract_website_data(url, start_time=0, level=0, max_level=3, visited_urls=None, host=None):
     if visited_urls is None:
         visited_urls = set()
-    if time.time() - start_time > 40:
+    if time.time() - start_time > 90:
         return []
-
-    print(url)
 
     if host is None:
         host = urlparse(url).netloc
@@ -75,7 +75,10 @@ def extract_website_data(url, start_time=0, level=0, max_level=3, visited_urls=N
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, "html.parser")
             base_url = urlparse(url)._replace(path='', query='', fragment='').geturl()
-            current_data = {"url": url, "text": clean_text(soup.get_text().strip())}
+            cleaned_text_data = clean_text(soup.get_text().strip())
+            current_data = {"url": url, "text": cleaned_text_data}
+            page_title = soup.title.string
+            generate_embedding(cleaned_text_data, url, page_title)
             data.append(current_data)
 
             all_links = soup.find_all("a", href=True)
