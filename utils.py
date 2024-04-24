@@ -1,8 +1,25 @@
+import os
 import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import time
+from openai import OpenAI
+from supabase import create_client, Client
+
+def generate_embedding(text, model="text-embedding-3-small"):
+    url: str = os.environ.get("SUPABASE_URL")
+    key: str = os.environ.get("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
+    client = OpenAI()
+    text = text.replace("\n", " ")
+    embedding = client.embeddings.create(input = [text], model=model).data[0].embedding
+    document = supabase.table('documents').insert({
+        "content": text,
+        "embedding": embedding,
+    }).execute()
+    print(document)
+    return embedding
 
 def clean_text(text):
     # Remove extra newlines and spaces
@@ -18,6 +35,9 @@ def clean_text(text):
     return cleaned_text.strip()
 
 def extract_website_data(url, start_time=0, level=0, max_level=3, visited_urls=None, host=None):
+    embedding = generate_embedding("hello")
+    print(embedding)
+    return []
     if visited_urls is None:
         visited_urls = set()
     if time.time() - start_time > 40:

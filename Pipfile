@@ -9,6 +9,8 @@ uvicorn = "*"
 beautifulsoup4 = "*"
 requests = "*"
 python-dotenv = "*"
+supabase = "*"
+openai = "*"
 
 [dev-packages]
 
