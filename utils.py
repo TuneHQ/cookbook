@@ -1,20 +1,14 @@
-def is_image_or_file(url):
-    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.svg', '.bmp'}
-    file_extensions = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.zip', '.rar', '.tar', '.gz'}
+import re
 
-    try:
-        if any(url.endswith(ext) for ext in file_extensions):
-            return True
-        response = requests.head(url, allow_redirects=True, timeout=10)
-        content_type = response.headers.get('content-type', '').lower()
-
-        if content_type.startswith('image/') or any(url.endswith(ext) for ext in image_extensions):
-            return True
-
-        return False
-    except requests.RequestException as e:
-        print("Request to", url, "failed:", str(e))
-        return False
-    except Exception as e:
-        print("An error occurred while checking content type for", url, ":", str(e))
-        return False
+def clean_text(text):
+    # Remove extra newlines and spaces
+    cleaned_text = re.sub(r'\n+', '\n', text)
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text)
+    # Remove wiki-specific text such as headings, links, categories, and special characters
+    cleaned_text = re.sub(r'\[.*?\]', '', cleaned_text)  # Remove text within square brackets
+    cleaned_text = re.sub(r'\{.*?\}', '', cleaned_text)  # Remove text within curly braces
+    cleaned_text = re.sub(r'\(.*?\)', '', cleaned_text)  # Remove text within parentheses
+    cleaned_text = re.sub(r'==.*?==', '', cleaned_text)  # Remove text within double equals
+    # Remove special characters
+    cleaned_text = re.sub(r'[\|•\t]', '', cleaned_text)
+    return cleaned_text.strip()
