@@ -1,5 +1,4 @@
 import time
-from typing import Union
 from fastapi import FastAPI, Request
 from utils import extract_website_data, get_response_tunestudio, search_documents
 from dotenv import load_dotenv

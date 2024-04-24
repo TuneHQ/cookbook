@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import gpt3_tokenizer
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
@@ -36,7 +37,7 @@ def search_documents(query, model="text-embedding-ada-002"):
     matches = supabase.rpc('match_documents',{
         "query_embedding" : embedding,
         "match_threshold" : 0.7,
-        "match_count" : 7
+        "match_count" : 6
     }).execute()
     
     return matches
@@ -102,10 +103,14 @@ def extract_website_data(url, start_time=0, level=0, max_level=3, visited_urls=N
         return []
     
 async def get_response_tunestudio(prompt: str, matches: List[dict]):
-    context = {',\n '.join([match['url'] +":\n"+ match['content']  for match in matches])}
-    context = " ".join(context)
-    print("Context:", context)
+    max_context_tokens = 1600
+    context = ""
+    for match in matches:
+        if gpt3_tokenizer.count_tokens(match['content'] + context) < max_context_tokens:
+            context = context + match['url'] + ":\n" +  match['content'] + "\n"
+            
     system = "You are a very enthusiastic TuneAi representative, your goal is to assist people effectively! Using the provided sections from the documentation, craft your answers in markdown format. If the documentation doesn't clearly state the answer, or you are uncertain, please respond with \"Apologies, but I'm unable to provide assistance with that.\", do not mention documentation keywords in the response.\n\n"
+
     url = "https://proxy.tune.app/chat/completions"
     headers = {
         "Authorization": os.environ.get("TUNE_API_KEY"),
