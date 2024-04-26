@@ -93,7 +93,7 @@ export default function Home() {
       .finally(() => setThreadListLoader(false));
   }
 
-  function createthreadID() {
+  function createthreadID(searchval = "") {
     if (!threadID) {
       const randomName = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
@@ -105,7 +105,7 @@ export default function Home() {
         })
         .then((res) => {
           setThreadID(res.data?.data?.id);
-          handleSearch(res.data?.data?.id);
+          handleSearch(res.data?.data?.id, searchval);
           getThreadList();
         })
         .catch((err: any) => {
@@ -114,15 +114,20 @@ export default function Home() {
     }
   }
 
-  const handleSearch = async (id: string) => {
+  const handleSearch = async (id: string, searchval?: string) => {
     setLoading(true);
     if (id === "" && !threadID) {
       await createthreadID();
       return;
     }
-    const searchValue = search.trim();
-    setSearch("");
+    let searchValue = "";
 
+    if (!searchval) {
+      searchValue = search.trim();
+    } else {
+      searchValue = searchval.trim();
+    }
+    setSearch("");
     const response = await axios
       .post(
         "/api/chats",
@@ -192,10 +197,8 @@ export default function Home() {
               {faqs?.map((val, id) => (
                 <div
                   onClick={() => {
-                    setSearch(val);
                     setThreadID("");
-                    setChats([]);
-                    handleSearch("");
+                    createthreadID(val);
                   }}
                   key={id}
                   className="revealCardAnimation medium p-[12px] border cursor-pointer rounded-[8px] border-light-border-base dark:border-dark-border-base w-full bg-light-background-surface dark:bg-dark-background-surface hover:bg-light-background-surfaceHover dark:hover:bg-dark-background-surfaceHover"
