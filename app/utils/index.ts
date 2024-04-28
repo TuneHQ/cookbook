@@ -138,16 +138,21 @@ const streamFunction = async (
       controller.enqueue("\n\n");
       let functionResponse = "";
 
-      if (tool_calls?.name == "search_web") {
+      if (
+        tool_calls?.name == "search_web" ||
+        tool_calls?.name == "shop_online"
+      ) {
         functionResponse = await searchWeb(
           JSON.parse(tool_calls.arguments).query,
-          controller
+          controller,
+          tool_calls?.name == "shop_online" ? "shopping" : "search"
         ).then(async (data) => {
           return data;
         });
       } else if (tool_calls?.name == "summarize_given_url") {
         functionResponse = await crawlWeb(JSON.parse(tool_calls.arguments).url);
       }
+      let finalResponse = ``;
 
       const stream = await TuneAIStream({
         messages: [
@@ -176,10 +181,11 @@ const streamFunction = async (
         const text = decoder.decode(value);
 
         controller.enqueue(JSON.stringify({ data: text, type: "text" }));
+        finalResponse = finalResponse + text;
         controller.enqueue("\n\n");
       }
       controller.enqueue("\n\n");
-      controller.enqueue(JSON.stringify({ data: "", type: "bye" }));
+      controller.enqueue(JSON.stringify({ data: finalResponse, type: "bye" }));
 
       controller.close();
     },
@@ -202,7 +208,8 @@ const streamText = async (streamTxt: string) => {
 
 const searchWeb = async (
   query: string,
-  controller?: ReadableStreamDefaultController
+  controller?: ReadableStreamDefaultController,
+  type?: string
 ) => {
   console.log("Searching the web for", query);
   let data = JSON.stringify({
@@ -211,7 +218,7 @@ const searchWeb = async (
 
   let config = {
     method: "post",
-    url: "https://google.serper.dev/search",
+    url: `https://google.serper.dev/${type}`,
     headers: {
       "X-API-KEY": process.env.SERPER_KEY || "",
       "Content-Type": "application/json",
@@ -226,7 +233,7 @@ const searchWeb = async (
         content = JSON.stringify(response.data?.knowledgeGraph);
       } else if (response?.data?.answerBox) {
         content = JSON.stringify(response.data?.answerBox);
-      } else
+      } else if (response?.data?.organic?.length > 0)
         for (let i = 0; i < Math.min(response.data?.organic?.length, 3); i++) {
           controller?.enqueue?.(
             JSON.stringify({
@@ -257,6 +264,19 @@ const searchWeb = async (
           }
           content = tempContent;
         }
+      else if (response?.data?.shopping) {
+        content = response?.data?.shopping?.map((item: any) => {
+          return `Title: ${item.title || "N/A"}\nSource: ${
+            item.source || "N/A"
+          }\nPrice: ${item.price || "N/A"}\nDelivery: ${
+            item.delivery || "N/A"
+          }\nRating: ${item.rating || "N/A"}\nRating Count: ${
+            item.ratingCount || "N/A"
+          }\nOffers: ${item.offers || "N/A"}\nProduct ID: ${
+            item.productId || "N/A"
+          }\nPosition: ${item.position || "N/A"}\n\n`;
+        });
+      }
       return content;
     })
     .catch(() => {
