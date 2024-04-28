@@ -3,11 +3,13 @@ import { TuneAIStream } from "../utils";
 import { StreamingTextResponse } from "ai";
 
 export async function GET(req: Request) {
+  const query = new URL(req.url).searchParams;
+  const prompt = query.get("prompt");
   const tuneResp = await TuneAIStream({
     messages: [
       {
         role: "user",
-        content: "10-day weather forecast for California",
+        content: prompt || "",
       },
     ],
     model: "rohan/tune-gpt4",

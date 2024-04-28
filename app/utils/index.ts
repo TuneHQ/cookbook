@@ -1,6 +1,7 @@
 import { createParser } from "eventsource-parser";
 import axios from "axios";
 import { JSDOM, VirtualConsole } from "jsdom";
+import llamaTokenizer from "llama-tokenizer-js";
 
 export const TuneAIStream = async ({
   messages,
@@ -58,7 +59,8 @@ export const TuneAIStream = async ({
     if (json?.choices?.[0]?.message?.tool_calls?.[0]?.function) {
       return streamFunction(
         json?.choices?.[0]?.message?.content,
-        json?.choices?.[0]?.message?.tool_calls?.[0]?.function
+        json?.choices?.[0]?.message?.tool_calls?.[0]?.function,
+        messages?.at(-1)?.content
       );
     } else {
       return streamText(json?.choices?.[0]?.message?.content || "");
@@ -109,7 +111,8 @@ const streamFunction = async (
   tool_calls: {
     arguments: string;
     name: string;
-  }
+  },
+  user_query: string
 ) => {
   const stream = new ReadableStream({
     async start(controller) {
@@ -148,9 +151,7 @@ const streamFunction = async (
         messages: [
           {
             role: "user",
-            content: `Use Below information to answer the question: ${
-              JSON.parse(tool_calls.arguments).query
-            }
+            content: `Use Below information to answer the question: ${user_query}
 
             Function Response:
             ${functionResponse}
@@ -218,7 +219,7 @@ const searchWeb = async (
   return await axios(config)
     .then(async (response) => {
       let content = "";
-      for (let i = 0; i < Math.min(response.data?.organic?.length, 3); i++) {
+      for (let i = 0; i < Math.min(response.data?.organic?.length, 6); i++) {
         controller?.enqueue?.(
           JSON.stringify({
             data: response.data?.organic?.[i]?.title,
@@ -228,7 +229,25 @@ const searchWeb = async (
         );
         controller?.enqueue?.("\n\n");
         const page = await crawlWeb(response.data?.organic?.[i]?.link);
-        content = `Content found at [${response.data?.organic?.[i]?.title}](${response.data?.organic?.[i]?.link}) is ${page}\n\n`;
+        controller?.enqueue?.(
+          JSON.stringify({
+            data: response.data?.organic?.[i]?.title,
+            url: response.data?.organic?.[i]?.link,
+            type: "crawled",
+          })
+        );
+        controller?.enqueue?.("\n\n");
+        const tempContent =
+          content +
+          `Content found at [${response.data?.organic?.[i]?.title}](${
+            response.data?.organic?.[i]?.link
+          }) is ${response.data?.organic?.[i]?.snippet || ""} ${page}\n\n`;
+        const inputTokens = llamaTokenizer.encode(tempContent)?.length;
+        console.log("Input Tokens", inputTokens);
+        if (inputTokens > 2400) {
+          continue;
+        }
+        content = tempContent;
       }
       return content;
     })
@@ -240,10 +259,6 @@ const searchWeb = async (
 const crawlWeb = async (url: string) => {
   let content = "";
   if (url.includes(".pdf")) return content;
-  const controller = new AbortController();
-  setTimeout(() => {
-    controller.abort();
-  }, 3000);
 
   const headers = {
     "Content-Type": "text/html",
@@ -251,7 +266,6 @@ const crawlWeb = async (url: string) => {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ",
   };
   await fetch(url, {
-    signal: controller.signal,
     headers: headers,
     cache: "no-cache",
   })
