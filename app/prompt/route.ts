@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     stream: false,
     tools: constants.tools,
     temperature: 0.5,
-    max_tokens: 400,
+    max_tokens: 600,
   });
   console.log("Tune Response", tuneResp);
 
