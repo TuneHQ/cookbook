@@ -145,6 +145,8 @@ const streamFunction = async (
         ).then(async (data) => {
           return data;
         });
+      } else if (tool_calls?.name == "summarize_given_url") {
+        functionResponse = await crawlWeb(JSON.parse(tool_calls.arguments).url);
       }
 
       const stream = await TuneAIStream({
