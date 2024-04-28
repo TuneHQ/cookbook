@@ -56,8 +56,11 @@ export const TuneAIStream = async ({
   }
   if (!stream) {
     const json = await response?.json();
-    console.log("Tune Stream Response", json);
-    if (json?.choices?.[0]?.finish_reason === "tool_calls") {
+    if (json?.choices?.[0]?.message?.tool_calls?.[0]?.function) {
+      return streamFunction(
+        json?.choices?.[0]?.message?.content,
+        json?.choices?.[0]?.message?.tool_calls?.[0]?.function
+      );
     } else {
       return streamText(json?.choices?.[0]?.message?.content || "");
     }
@@ -102,11 +105,43 @@ export const TuneAIStream = async ({
   return streamResp;
 };
 
+const streamFunction = async (
+  content: string,
+  tool_calls: {
+    arguments: string;
+    name: string;
+  }
+) => {
+  const stream = new ReadableStream({
+    start(controller) {
+      if (content)
+        controller.enqueue(
+          JSON.stringify({
+            data: content,
+            type: "function_thought",
+          })
+        );
+      controller.enqueue(
+        JSON.stringify({
+          data: `Calling function ${tool_calls.name} with arguments (${
+            Object.entries(JSON.parse(tool_calls.arguments))?.map(
+              ([key, value]) => `${key} = ${value},`
+            ) || ""
+          })`,
+          type: "function",
+        })
+      );
+      controller.close();
+    },
+  });
+  return stream;
+};
+
 const streamText = async (streamTxt: string) => {
   const stream = new ReadableStream({
     start(controller) {
       function pushData() {
-        controller.enqueue(streamTxt);
+        controller.enqueue(JSON.stringify({ data: streamTxt, type: "text" }));
         controller.close();
       }
       pushData();
