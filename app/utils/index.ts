@@ -140,12 +140,17 @@ const streamFunction = async (
 
       if (
         tool_calls?.name == "search_web" ||
-        tool_calls?.name == "shop_online"
+        tool_calls?.name == "shop_online" ||
+        tool_calls?.name == "get_news"
       ) {
         functionResponse = await searchWeb(
           JSON.parse(tool_calls.arguments).query,
           controller,
-          tool_calls?.name == "shop_online" ? "shopping" : "search"
+          tool_calls?.name == "shop_online"
+            ? "shopping"
+            : tool_calls?.name === "search_web"
+            ? "search"
+            : "news"
         ).then(async (data) => {
           return data;
         });
@@ -233,30 +238,34 @@ const searchWeb = async (
         content = JSON.stringify(response.data?.knowledgeGraph);
       } else if (response?.data?.answerBox) {
         content = JSON.stringify(response.data?.answerBox);
-      } else if (response?.data?.organic?.length > 0)
-        for (let i = 0; i < Math.min(response.data?.organic?.length, 3); i++) {
+      } else if (
+        response?.data?.organic?.length > 0 ||
+        response?.data?.news?.length > 0
+      ) {
+        const respList = response?.data?.organic || response?.data?.news;
+        for (let i = 0; i < Math.min(respList?.length, 3); i++) {
           controller?.enqueue?.(
             JSON.stringify({
-              data: response.data?.organic?.[i]?.title,
-              url: response.data?.organic?.[i]?.link,
+              data: respList?.[i]?.title,
+              url: respList?.[i]?.link,
               type: "crawling",
             })
           );
           controller?.enqueue?.("\n\n");
-          const page = await crawlWeb(response.data?.organic?.[i]?.link);
+          const page = await crawlWeb(respList?.[i]?.link);
           controller?.enqueue?.(
             JSON.stringify({
-              data: response.data?.organic?.[i]?.title,
-              url: response.data?.organic?.[i]?.link,
+              data: respList?.[i]?.title,
+              url: respList?.[i]?.link,
               type: "crawled",
             })
           );
           controller?.enqueue?.("\n\n");
           const tempContent =
             content +
-            `Content found at [${response.data?.organic?.[i]?.title}](${
-              response.data?.organic?.[i]?.link
-            }) is ${response.data?.organic?.[i]?.snippet || ""} ${page}\n\n`;
+            `Content found at [${respList?.[i]?.title}](${
+              respList?.[i]?.link
+            }) is ${respList?.[i]?.snippet || ""} ${page}\n\n`;
           const inputTokens = llamaTokenizer.encode(tempContent)?.length;
           console.log("Input Tokens", inputTokens);
           if (inputTokens > 2400) {
@@ -264,7 +273,7 @@ const searchWeb = async (
           }
           content = tempContent;
         }
-      else if (response?.data?.shopping) {
+      } else if (response?.data?.shopping) {
         content = response?.data?.shopping?.map((item: any) => {
           return `Title: ${item.title || "N/A"}\nSource: ${
             item.source || "N/A"
