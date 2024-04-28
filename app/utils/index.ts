@@ -48,12 +48,9 @@ export const TuneAIStream = async ({
       max_tokens: max_tokens,
       tools,
     }),
+    cache: "no-cache",
   });
-  console.log("Tune Stream Response Status", response.status);
   if (response.status !== 200) {
-    // print the error
-    console.log("Error", response);
-
     throw new Error("Error: " + response.status);
   }
   if (!stream) {
@@ -136,17 +133,49 @@ const streamFunction = async (
         })
       );
       controller.enqueue("\n\n");
+      let functionResponse = "";
 
       if (tool_calls?.name == "search_web") {
-        await searchWeb(
+        functionResponse = await searchWeb(
           JSON.parse(tool_calls.arguments).query,
           controller
-        ).then((data) => {
-          controller.enqueue(JSON.stringify({ data, type: "text" }));
+        ).then(async (data) => {
+          return data;
         });
       }
-      controller.enqueue("\n\n");
 
+      const stream = await TuneAIStream({
+        messages: [
+          {
+            role: "user",
+            content: `Use Below information to answer the question: ${
+              JSON.parse(tool_calls.arguments).query
+            }
+
+            Function Response:
+            ${functionResponse}
+            `,
+          },
+        ],
+        model: "rohan/tune-gpt4",
+        stream: true,
+        temperature: 0.5,
+      });
+
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      while (true && reader) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+
+        const text = decoder.decode(value);
+
+        controller.enqueue(JSON.stringify({ data: text, type: "text" }));
+        controller.enqueue("\n\n");
+      }
+      controller.enqueue("\n\n");
       controller.enqueue(JSON.stringify({ data: "", type: "bye" }));
 
       controller.close();
@@ -213,7 +242,6 @@ const crawlWeb = async (url: string) => {
   if (url.includes(".pdf")) return content;
   const controller = new AbortController();
   setTimeout(() => {
-    console.log("Aborting fetch", url);
     controller.abort();
   }, 3000);
 
@@ -222,7 +250,11 @@ const crawlWeb = async (url: string) => {
     "User-Agent":
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ",
   };
-  await fetch(url, { signal: controller.signal, headers: headers })
+  await fetch(url, {
+    signal: controller.signal,
+    headers: headers,
+    cache: "no-cache",
+  })
     .then((response) => response.text())
     .then((data) => {
       content = data;
