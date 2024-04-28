@@ -1,3 +1,5 @@
+import { createParser } from "eventsource-parser";
+
 export const TuneAIStream = async ({
   messages,
   model,
@@ -29,34 +31,36 @@ export const TuneAIStream = async ({
     };
   }[];
 }) => {
-  console.log("Using Tune Stream", { model });
-  let ApiKey = process.env.DEV_NBX_KEY;
-
-  const response = await fetch(`https://studio.tune.app/chat/completions`, {
+  const response = await fetch(`https://proxy.tune.app/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: ApiKey || "",
+      Authorization: process.env.TUNE_KEY || "",
     },
     body: JSON.stringify({
       messages: messages,
       model: model,
-      stream: true,
+      stream: stream,
       stop,
       temperature,
       max_tokens: max_tokens,
       tools,
     }),
   });
-  console.log("Dev NBX Stream Response Status", response.status);
+  console.log("Tune Stream Response Status", response.status);
   if (response.status !== 200) {
     // print the error
+    console.log("Error", response);
 
     throw new Error("Error: " + response.status);
   }
   if (!stream) {
     const json = await response?.json();
-    return json?.choices?.[0]?.message?.content || "";
+    console.log("Tune Stream Response", json);
+    if (json?.choices?.[0]?.finish_reason === "tool_calls") {
+    } else {
+      return streamText(json?.choices?.[0]?.message?.content || "");
+    }
   }
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
@@ -96,4 +100,17 @@ export const TuneAIStream = async ({
     },
   });
   return streamResp;
+};
+
+const streamText = async (streamTxt: string) => {
+  const stream = new ReadableStream({
+    start(controller) {
+      function pushData() {
+        controller.enqueue(streamTxt);
+        controller.close();
+      }
+      pushData();
+    },
+  });
+  return stream;
 };
