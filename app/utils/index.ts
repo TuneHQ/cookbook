@@ -1,4 +1,6 @@
 import { createParser } from "eventsource-parser";
+import axios from "axios";
+import { JSDOM, VirtualConsole } from "jsdom";
 
 export const TuneAIStream = async ({
   messages,
@@ -113,14 +115,16 @@ const streamFunction = async (
   }
 ) => {
   const stream = new ReadableStream({
-    start(controller) {
-      if (content)
+    async start(controller) {
+      if (content) {
         controller.enqueue(
           JSON.stringify({
             data: content,
             type: "function_thought",
           })
         );
+        controller.enqueue("\n\n");
+      }
       controller.enqueue(
         JSON.stringify({
           data: `Calling function ${tool_calls.name} with arguments (${
@@ -131,6 +135,20 @@ const streamFunction = async (
           type: "function",
         })
       );
+      controller.enqueue("\n\n");
+
+      if (tool_calls?.name == "search_web") {
+        await searchWeb(
+          JSON.parse(tool_calls.arguments).query,
+          controller
+        ).then((data) => {
+          controller.enqueue(JSON.stringify({ data, type: "text" }));
+        });
+      }
+      controller.enqueue("\n\n");
+
+      controller.enqueue(JSON.stringify({ data: "", type: "bye" }));
+
       controller.close();
     },
   });
@@ -149,3 +167,114 @@ const streamText = async (streamTxt: string) => {
   });
   return stream;
 };
+
+const searchWeb = async (
+  query: string,
+  controller?: ReadableStreamDefaultController
+) => {
+  let data = JSON.stringify({
+    q: query,
+  });
+
+  let config = {
+    method: "post",
+    url: "https://google.serper.dev/search",
+    headers: {
+      "X-API-KEY": process.env.SERPER_KEY || "",
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+
+  return await axios(config)
+    .then(async (response) => {
+      let content = "";
+      for (let i = 0; i < Math.min(response.data?.organic?.length, 3); i++) {
+        controller?.enqueue?.(
+          JSON.stringify({
+            data: response.data?.organic?.[i]?.title,
+            url: response.data?.organic?.[i]?.link,
+            type: "crawling",
+          })
+        );
+        controller?.enqueue?.("\n\n");
+        const page = await crawlWeb(response.data?.organic?.[i]?.link);
+        content = `Content found at [${response.data?.organic?.[i]?.title}](${response.data?.organic?.[i]?.link}) is ${page}\n\n`;
+      }
+      return content;
+    })
+    .catch(() => {
+      return "Error in searching the web";
+    });
+};
+
+const crawlWeb = async (url: string) => {
+  let content = "";
+  if (url.includes(".pdf")) return content;
+  const controller = new AbortController();
+  setTimeout(() => {
+    console.log("Aborting fetch", url);
+    controller.abort();
+  }, 3000);
+
+  const headers = {
+    "Content-Type": "text/html",
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ",
+  };
+  await fetch(url, { signal: controller.signal, headers: headers })
+    .then((response) => response.text())
+    .then((data) => {
+      content = data;
+    })
+    .catch((err) => {
+      console.log("Not able to fetch url using fetch", err);
+    });
+
+  const virtualConsole = new VirtualConsole();
+  virtualConsole.on("error", () => {
+    // No-op to skip console errors.
+  });
+
+  // put the html string into a DOM
+  const dom = new JSDOM(content ?? "", {
+    virtualConsole,
+  });
+
+  const body = dom.window.document.querySelector("body");
+  if (!body) throw new Error("body of the webpage is null");
+
+  removeTags(body);
+  // recursively extract text content from the body and then remove newlines and multiple spaces
+  content = (naiveInnerText(body) ?? "").replace(/ {2}|\r\n|\n|\r/gm, "");
+
+  return content;
+};
+
+function removeTags(node: Node) {
+  if (node.hasChildNodes()) {
+    node.childNodes.forEach((childNode) => {
+      if (node.nodeName === "SCRIPT" || node.nodeName === "STYLE") {
+        node.removeChild(childNode);
+      } else {
+        removeTags(childNode);
+      }
+    });
+  }
+}
+
+function naiveInnerText(node: any): string {
+  const Node = node; // We need Node(DOM's Node) for the constants, but Node doesn't exist in the nodejs global space, and any Node instance references the constants through the prototype chain
+  return [...node.childNodes]
+    .map((childNode) => {
+      switch (childNode.nodeType) {
+        case Node.TEXT_NODE:
+          return node.textContent;
+        case Node.ELEMENT_NODE:
+          return naiveInnerText(childNode);
+        default:
+          return "";
+      }
+    })
+    .join("\n");
+}
