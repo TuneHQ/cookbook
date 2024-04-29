@@ -123,7 +123,10 @@ export default function Home() {
             setLoadingTxt(eventData.data);
           } else {
             setLoadingTxt("");
-            setLoading(false);
+            setTimeout(() => {
+              setAnswer("");
+              setLoading(false);
+            });
           }
 
           setAnswer(message);
@@ -132,13 +135,13 @@ export default function Home() {
 
       setAnswer(message);
 
-      setLoading(false);
       setTimeout(() => {
         setAnswer("");
         setLoading(false);
       });
     } catch (error) {
       console.log(error);
+      setAnswer("");
       setLoading(false);
     }
   };
@@ -219,19 +222,21 @@ export default function Home() {
               setTimeout(() => {
                 scrollToBottom(true);
               }, 100);
-              setChats((prev) => [
-                ...prev,
-                {
-                  msg: search,
-                  isSender: true,
-                  sender: "You",
-                },
-                {
-                  msg: "",
-                  isSender: false,
-                  sender: "Tune",
-                },
-              ]);
+              setTimeout(() => {
+                setChats((prev) => [
+                  ...prev,
+                  {
+                    msg: search,
+                    isSender: true,
+                    sender: "You",
+                  },
+                  {
+                    msg: "",
+                    isSender: false,
+                    sender: "Tune",
+                  },
+                ]);
+              });
             }
           }}
           data-gramm="false"
