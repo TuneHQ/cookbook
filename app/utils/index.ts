@@ -158,7 +158,7 @@ const streamFunction = async (
         functionResponse = await crawlWeb(JSON.parse(tool_calls.arguments).url);
       } else {
         const image = await textToImage(user_query);
-        const chunkSize = 5000; // define the maximum number of characters per chunk
+        const chunkSize = 10000; // define the maximum number of characters per chunk
         let offset = 0;
 
         while (offset < image.length) {
@@ -200,41 +200,44 @@ const streamFunction = async (
         controller.enqueue("\n\n\n\n\n\n");
       }
       let finalResponse = ``;
-
-      const stream = await TuneAIStream({
-        messages: [
-          {
-            role: "user",
-            content: `Use Below information to answer the question: ${user_query}
+      if (tool_calls?.name !== "generate_image_from_text") {
+        const stream = await TuneAIStream({
+          messages: [
+            {
+              role: "user",
+              content: `Use Below information to answer the question: ${user_query}
 
             Function Response:
             ${functionResponse}
             `,
-          },
-        ],
-        model: "rohan/tune-gpt4",
-        stream: true,
-        temperature: 0.5,
-      });
+            },
+          ],
+          model: "rohan/tune-gpt4",
+          stream: true,
+          temperature: 0.5,
+        });
 
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      while (true && reader) {
-        const { done, value } = await reader.read();
-        if (done) {
-          break;
+        const reader = stream.getReader();
+        const decoder = new TextDecoder();
+        while (true && reader) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+
+          const text = decoder.decode(value);
+
+          controller.enqueue(JSON.stringify({ data: text, type: "text" }));
+          finalResponse = finalResponse + text;
+          controller.enqueue("\n\n\n\n\n\n");
         }
-
-        const text = decoder.decode(value);
-
-        controller.enqueue(JSON.stringify({ data: text, type: "text" }));
-        finalResponse = finalResponse + text;
         controller.enqueue("\n\n\n\n\n\n");
-      }
-      controller.enqueue("\n\n\n\n\n\n");
-      controller.enqueue(JSON.stringify({ data: finalResponse, type: "bye" }));
+        controller.enqueue(
+          JSON.stringify({ data: finalResponse, type: "bye" })
+        );
 
-      controller.close();
+        controller.close();
+      }
     },
   });
   return stream;
@@ -307,13 +310,16 @@ const searchWeb = async (
             content +
             `Content found at [${respList?.[i]?.title}](${
               respList?.[i]?.link
-            }) is ${respList?.[i]?.snippet || ""} ${page}\n\n\n\n\n\n`;
+            }) is ${respList?.[i]?.snippet || ""} ${page}\n\n`;
           const inputTokens = llamaTokenizer.encode(tempContent)?.length;
           console.log("Input Tokens", inputTokens);
-          if (inputTokens > 2400) {
-            continue;
-          }
-          content = tempContent;
+          if (inputTokens > 6400) {
+            content =
+              content +
+              `Content found at [${respList?.[i]?.title}](${
+                respList?.[i]?.link
+              }) is ${respList?.[i]?.snippet || ""}\n\n`;
+          } else content = tempContent;
         }
       } else if (response?.data?.shopping) {
         content = response?.data?.shopping?.map((item: any) => {
@@ -345,7 +351,7 @@ const crawlWeb = async (url: string) => {
   setTimeout(() => {
     console.log("Aborting fetch", url);
     controller.abort();
-  }, 1000);
+  }, 600);
 
   const headers = {
     "Content-Type": "text/html",
