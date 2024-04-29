@@ -8,7 +8,7 @@ import MessageCard from "./components/MessageCard";
 const faqs = [
   "What is Tunehq.ai?",
   "Tunehq.ai pricing?",
-  "Can you crawl tunehq.ai",
+  "Summarize tunehq.ai",
   "Generate image of a llama",
 ];
 
@@ -67,7 +67,7 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: searchValue,
+        prompt: searchValue,
       }),
     });
     if (!response.ok) {
@@ -163,6 +163,7 @@ export default function Home() {
             {faqs?.map((val, id) => (
               <div
                 onClick={() => {
+                  setSearch(val);
                   setChats((prev) => [
                     ...prev,
                     {

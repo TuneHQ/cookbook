@@ -2,9 +2,8 @@ import constants from "../contants";
 import { TuneAIStream } from "../utils";
 import { StreamingTextResponse } from "ai";
 
-export async function GET(req: Request) {
-  const query = new URL(req.url).searchParams;
-  const prompt = query.get("prompt");
+export async function POST(req: Request) {
+  const { prompt } = await req.json();
   const tuneResp = await TuneAIStream({
     messages: [
       {
