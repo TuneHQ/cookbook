@@ -70,6 +70,23 @@ const constants = {
         },
       },
     },
+    {
+      type: "function",
+      function: {
+        name: "generate_image_from_text",
+        description: "Generate an image from a given text.",
+        parameters: {
+          type: "object",
+          properties: {
+            text: {
+              type: "string",
+              description: "The text to generate an image from.",
+            },
+          },
+          required: ["text"],
+        },
+      },
+    },
   ],
 };
 
