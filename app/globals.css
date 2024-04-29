@@ -3,23 +3,106 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  font-family: "proxima-nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+::selection {
+  background: #646cff;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html,
+body,
+div,
+textarea,
+.noScrollBar {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+*::-moz-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  @apply bg-[#FFFFFF]  text-[#353849];
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+body {
+  @apply overflow-hidden h-screen w-screen bg-[#FFFFFF]  text-[#353849];
+}
+
+.revealCardAnimation {
+  animation: revealCardAnimation 0.5s ease-in-out;
+}
+
+@keyframes revealCardAnimation {
+  0% {
+    opacity: 0;
+    scale: 0.9;
   }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+.markdownHolder {
+  font-size: 16px;
+}
+
+.markdownHolder p {
+  @apply mb-[8px];
+}
+
+/* if p is inside li */
+.markdownHolder li p {
+  @apply mb-[0px] inline;
+}
+
+.markdownHolder ol {
+  @apply list-inside list-decimal;
+}
+
+.markdownHolder ul {
+  @apply list-inside list-disc;
 }

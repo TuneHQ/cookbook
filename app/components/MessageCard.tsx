@@ -1,6 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehype from "rehype-raw";
+import { ChatInterface } from "../page";
 
 const MessageCard = ({
   chat,
@@ -11,13 +12,11 @@ const MessageCard = ({
 }) => {
   return (
     <div className="flex gap-[16px] w-full">
-      <div className="h-[30px] w-[30px] flex justify-center items-center rounded-full bg-light-background-surfaceHighHover dark:bg-dark-background-surfaceHighHover">
+      <div className="h-[30px] w-[30px] flex justify-center items-center rounded-full bg-[#ECEFF3]">
         {chat?.sender?.charAt(0)}
       </div>
-      <div className="p-[8px] rounded-md w-full bg-light-background-surfaceLow dark:bg-dark-background-surfaceHigh flex flex-col">
-        <span className="mini text-light-text-subtle dark:text-dark-text-subtle ">
-          {chat?.sender}
-        </span>
+      <div className="p-[8px] rounded-md w-full bg-[#FFFFFF] flex flex-col">
+        <span className="mini text-[#808897] ">{chat?.sender}</span>
         {!loading ? (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -34,7 +33,7 @@ const MessageCard = ({
             {chat.msg}
           </ReactMarkdown>
         ) : (
-          <div className="h-[16px] w-[2px] bg-light-text-subtle dark:bg-dark-text-subtle animate-pulse"></div>
+          <div className="h-[16px] w-[2px] bg-[#808897] animate-pulse"></div>
         )}
       </div>
     </div>

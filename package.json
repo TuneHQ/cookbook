@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ai": "^3.0.35",
+    "chainfury": "^0.0.1-alpha.7",
     "eventsource-parser": "^1.1.2",
     "jsdom": "^24.0.0",
     "llama-tokenizer-js": "^1.2.1",
