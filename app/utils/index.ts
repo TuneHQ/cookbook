@@ -156,6 +156,16 @@ const streamFunction = async (
         });
       } else if (tool_calls?.name == "summarize_given_url") {
         functionResponse = await crawlWeb(JSON.parse(tool_calls.arguments).url);
+      } else {
+        const image = await textToImage(user_query);
+        controller.enqueue(
+          JSON.stringify({
+            data: `Image Generated:\n ![Image](data:image/png;base64,${image})`,
+            type: "image",
+          })
+        );
+        controller.close();
+        console.log("Image", image);
       }
       let finalResponse = ``;
 
@@ -368,4 +378,39 @@ function naiveInnerText(node: any): string {
       }
     })
     .join("\n");
+}
+
+async function textToImage(query: string) {
+  const response = await fetch(
+    `https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
+      },
+      body: JSON.stringify({
+        text_prompts: [
+          {
+            text: query,
+          },
+        ],
+        cfg_scale: 7,
+        height: 512,
+        width: 512,
+        steps: 30,
+        samples: 1,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Non-200 response: ${await response.text()}`);
+  }
+
+  const responseJSON = (await response.json()) as any;
+  if (responseJSON?.artifacts?.[0]) {
+    return responseJSON?.artifacts?.[0]?.base64;
+  }
 }
