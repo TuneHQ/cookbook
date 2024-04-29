@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  font-family: "proxima-nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -35,6 +35,9 @@ div,
 textarea,
 .noScrollBar {
   scrollbar-width: none;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif !important;
 }
 
 *::-webkit-scrollbar-track,

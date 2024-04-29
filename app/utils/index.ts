@@ -123,7 +123,7 @@ const streamFunction = async (
             type: "function_thought",
           })
         );
-        controller.enqueue("\n\n");
+        controller.enqueue("\n\n\n\n\n\n");
       }
       controller.enqueue(
         JSON.stringify({
@@ -135,7 +135,7 @@ const streamFunction = async (
           type: "function",
         })
       );
-      controller.enqueue("\n\n");
+      controller.enqueue("\n\n\n\n\n\n");
       let functionResponse = "";
 
       if (
@@ -158,14 +158,46 @@ const streamFunction = async (
         functionResponse = await crawlWeb(JSON.parse(tool_calls.arguments).url);
       } else {
         const image = await textToImage(user_query);
+        const chunkSize = 5000; // define the maximum number of characters per chunk
+        let offset = 0;
+
+        while (offset < image.length) {
+          if (offset == 0) {
+            // Start tag for the first chunk
+            controller.enqueue(
+              JSON.stringify({
+                data: `<img src="data:image/png;base64,${image.slice(
+                  offset,
+                  offset + chunkSize
+                )}`,
+                type: "image",
+              })
+            );
+          } else {
+            // Continuation of the image data for intermediate chunks
+            controller.enqueue(
+              JSON.stringify({
+                data: image.slice(
+                  offset,
+                  Math.min(image.length, offset + chunkSize)
+                ),
+                type: "image",
+              })
+            );
+          }
+
+          offset += chunkSize;
+          controller.enqueue("\n\n\n\n\n\n");
+        }
+
+        // End tag for the final chunk
         controller.enqueue(
           JSON.stringify({
-            data: `Image Generated:\n ![Image](data:image/png;base64,${image})`,
+            data: '"/>',
             type: "image",
           })
         );
-        controller.close();
-        console.log("Image", image);
+        controller.enqueue("\n\n\n\n\n\n");
       }
       let finalResponse = ``;
 
@@ -197,9 +229,9 @@ const streamFunction = async (
 
         controller.enqueue(JSON.stringify({ data: text, type: "text" }));
         finalResponse = finalResponse + text;
-        controller.enqueue("\n\n");
+        controller.enqueue("\n\n\n\n\n\n");
       }
-      controller.enqueue("\n\n");
+      controller.enqueue("\n\n\n\n\n\n");
       controller.enqueue(JSON.stringify({ data: finalResponse, type: "bye" }));
 
       controller.close();
@@ -261,7 +293,7 @@ const searchWeb = async (
               type: "crawling",
             })
           );
-          controller?.enqueue?.("\n\n");
+          controller?.enqueue?.("\n\n\n\n\n\n");
           const page = await crawlWeb(respList?.[i]?.link);
           controller?.enqueue?.(
             JSON.stringify({
@@ -270,12 +302,12 @@ const searchWeb = async (
               type: "crawled",
             })
           );
-          controller?.enqueue?.("\n\n");
+          controller?.enqueue?.("\n\n\n\n\n\n");
           const tempContent =
             content +
             `Content found at [${respList?.[i]?.title}](${
               respList?.[i]?.link
-            }) is ${respList?.[i]?.snippet || ""} ${page}\n\n`;
+            }) is ${respList?.[i]?.snippet || ""} ${page}\n\n\n\n\n\n`;
           const inputTokens = llamaTokenizer.encode(tempContent)?.length;
           console.log("Input Tokens", inputTokens);
           if (inputTokens > 2400) {
@@ -293,7 +325,7 @@ const searchWeb = async (
             item.ratingCount || "N/A"
           }\nOffers: ${item.offers || "N/A"}\nProduct ID: ${
             item.productId || "N/A"
-          }\nPosition: ${item.position || "N/A"}\n\n`;
+          }\nPosition: ${item.position || "N/A"}\n\n\n\n\n\n`;
         });
       }
       return content;
@@ -397,8 +429,8 @@ async function textToImage(query: string) {
           },
         ],
         cfg_scale: 7,
-        height: 512,
-        width: 512,
+        height: 320,
+        width: 320,
         steps: 30,
         samples: 1,
       }),

@@ -40,6 +40,7 @@ export default function Home() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [loadingTxt, setLoadingTxt] = useState("");
   let abortController = useRef(new AbortController());
 
   const stopGenerating = () => {
@@ -49,82 +50,97 @@ export default function Home() {
   };
 
   const handleSearch = async () => {
-    const searchValue = search.trim();
-    setSearch("");
-    if (loading) return;
-    setLoading(true);
-    abortController.current = new AbortController();
-    abortController.current.signal.addEventListener("abort", () => {
-      setLoading(false);
-      setAnswer("");
-    });
-    const url = `/prompt`;
+    try {
+      const searchValue = search.trim();
+      setSearch("");
+      if (loading) return;
+      setLoading(true);
+      abortController.current = new AbortController();
+      abortController.current.signal.addEventListener("abort", () => {
+        setLoading(false);
+        setAnswer("");
+      });
+      const url = `/prompt`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      signal: abortController.current?.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: searchValue,
-      }),
-    });
-    if (!response.ok) {
-      alert("Something went wrong, please try again later.");
-      setLoading(false);
-      return;
-    }
-    if (!response?.headers?.get("content-type")) {
-      const text = await response.text();
-      setAnswer(text);
+      const response = await fetch(url, {
+        method: "POST",
+        signal: abortController.current?.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: searchValue,
+        }),
+      });
+      if (!response.ok) {
+        alert("Something went wrong, please try again later.");
+        setLoading(false);
+        return;
+      }
+      if (!response?.headers?.get("content-type")) {
+        const text = await response.text();
+        setAnswer(text);
+        setLoading(false);
+        setTimeout(() => {
+          setAnswer("");
+        }, 10000);
+        return;
+      }
+
+      const reader = response?.body?.getReader();
+      let decoder = new TextDecoder();
+
+      let message = "";
+      while (true && reader) {
+        const chunkReader = await reader.read();
+
+        const { done, value } = chunkReader;
+        if (done) {
+          break;
+        }
+
+        const text = decoder.decode(value);
+        const lines = text.trim().split("\n\n\n\n\n\n");
+
+        for (const line of lines) {
+          console.log("eventData ->", { line });
+
+          const eventData = JSON.parse(line);
+          if (eventData?.sources) continue;
+          if (eventData.error) {
+            // if eventData has error
+            console.log("error ->", eventData.error);
+            setLoading(false);
+            // show error
+            alert(eventData.error);
+            return;
+          }
+          if (eventData?.type === "text" || eventData?.type === "image") {
+            setLoadingTxt("");
+            console.log("data ->", eventData.data);
+            message = message + eventData.data;
+          } else if (eventData?.type !== "bye") {
+            setLoadingTxt(eventData.data);
+          } else {
+            setLoadingTxt("");
+            setLoading(false);
+          }
+
+          setAnswer(message);
+        }
+      }
+
+      setAnswer(message);
+
       setLoading(false);
       setTimeout(() => {
         setAnswer("");
-      }, 10000);
-      return;
+        setLoading(false);
+      });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
-
-    const reader = response?.body?.getReader();
-    let decoder = new TextDecoder();
-
-    let message = "";
-    while (true && reader) {
-      const chunkReader = await reader.read();
-
-      const { done, value } = chunkReader;
-      if (done) {
-        break;
-      }
-
-      const text = decoder.decode(value);
-      const lines = text.trim().split("\n\n");
-
-      for (const line of lines) {
-        const eventData = JSON.parse(line);
-        console.log("eventData ->", eventData);
-        if (eventData?.sources) continue;
-        if (eventData.error) {
-          // if eventData has error
-          console.log("error ->", eventData.error);
-          setLoading(false);
-          // show error
-          alert(eventData.error);
-          return;
-        }
-        if (eventData?.type === "text") {
-          message = message + eventData.data;
-        }
-        setAnswer(message);
-      }
-    }
-
-    setAnswer(message);
-
-    setLoading(false);
-    setTimeout(() => {
-      setAnswer("");
-    });
   };
 
   useEffect(() => {
@@ -156,6 +172,7 @@ export default function Home() {
                 ? !chats?.[chats?.length - 1]?.msg && loading
                 : false
             }
+            loadingTxt={loadingTxt}
           />
         ))}
       </div>
