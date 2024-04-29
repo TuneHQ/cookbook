@@ -98,10 +98,11 @@ export default function Home() {
       }
 
       const text = decoder.decode(value);
-      const lines = text.trim().split("\n\n\n\n\n");
+      const lines = text.trim().split("\n\n");
 
       for (const line of lines) {
         const eventData = JSON.parse(line);
+        console.log("eventData ->", eventData);
         if (eventData?.sources) continue;
         if (eventData.error) {
           // if eventData has error
@@ -111,7 +112,9 @@ export default function Home() {
           alert(eventData.error);
           return;
         }
-        message = message + eventData.value;
+        if (eventData?.type === "text") {
+          message = message + eventData.data;
+        }
         setAnswer(message);
       }
     }

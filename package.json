@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.13",
     "ai": "^3.0.35",
     "chainfury": "^0.0.1-alpha.7",
     "eventsource-parser": "^1.1.2",
