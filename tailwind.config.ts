@@ -330,7 +330,7 @@ export default {
           '"Segoe UI Symbol"',
         ],
       },
-      typography: (theme) => ({
+      typography: (theme: any) => ({
         nbx: {
           css: [
             {
