@@ -198,6 +198,7 @@ const streamFunction = async (
           })
         );
         controller.enqueue("\n\n\n\n\n\n");
+        controller.close();
       }
       let finalResponse = ``;
       if (tool_calls?.name !== "generate_image_from_text") {
@@ -212,7 +213,7 @@ const streamFunction = async (
             `,
             },
           ],
-          model: "rohan/tune-gpt4",
+          model: process.env.STUDIO_MODEL || "",
           stream: true,
           temperature: 0.5,
         });

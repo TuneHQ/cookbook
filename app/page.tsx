@@ -20,6 +20,14 @@ export interface ChatInterface {
   message_id?: string;
 }
 
+const safeParse = (str: string) => {
+  try {
+    return JSON.parse(str);
+  } catch (error) {
+    return str;
+  }
+};
+
 const scrollToBottom = (force = false) => {
   const chatsHolder = document.querySelector(".chatsHolder");
   if (!chatsHolder) return;
@@ -69,7 +77,14 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: searchValue,
+          messages: chats?.slice(0, chats.length - 1).map((chat) => {
+            return {
+              role: chat.isSender ? "user" : "assistant",
+              content: chat.msg?.includes("data:image/png;base64")
+                ? "Image Generated"
+                : chat.msg,
+            };
+          }),
         }),
       });
       if (!response.ok) {
@@ -105,7 +120,7 @@ export default function Home() {
         for (const line of lines) {
           console.log("eventData ->", { line });
 
-          const eventData = JSON.parse(line);
+          const eventData = safeParse(line);
           if (eventData?.sources) continue;
           if (eventData.error) {
             // if eventData has error
@@ -121,12 +136,11 @@ export default function Home() {
             message = message + eventData.data;
           } else if (eventData?.type !== "bye") {
             setLoadingTxt(eventData.data);
+          } else if (eventData?.type === "bye") {
+            message = eventData.data;
           } else {
             setLoadingTxt("");
-            setTimeout(() => {
-              setAnswer("");
-              setLoading(false);
-            });
+            setLoading(false);
           }
 
           setAnswer(message);
@@ -138,7 +152,7 @@ export default function Home() {
       setTimeout(() => {
         setAnswer("");
         setLoading(false);
-      });
+      }, 700);
     } catch (error) {
       console.log(error);
       setAnswer("");
@@ -165,7 +179,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-between max-w-[1100px] mx-auto prose-nbx p-[16px] w-full h-full">
-      <div className="chatsHolder w-full flex flex-col gap-[16px] overflow-scroll pb-[16px]">
+      <div className="chatsHolder w-full flex flex-col gap-[16px] overflow-scroll pb-[32px]">
         {chats?.map((chat, id) => (
           <MessageCard
             chat={chat}

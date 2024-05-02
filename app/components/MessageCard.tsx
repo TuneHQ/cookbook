@@ -14,8 +14,12 @@ const MessageCard = ({
 }) => {
   return (
     <div className="flex gap-[16px] w-full prose-nbx">
-      <div className="h-[30px] w-[30px] flex justify-center items-center rounded-full bg-[#ECEFF3]">
-        {chat?.sender?.charAt(0)}
+      <div
+        className={`${
+          chat?.isSender ? "bg-[#ECEFF3]" : "bg-[#FF6A1F]"
+        } h-[30px] w-[30px] flex justify-center items-center rounded-full medium`}
+      >
+        {chat?.isSender ? chat?.sender?.charAt(0) : ""}
       </div>
       <div className="p-[8px] rounded-md w-full bg-[#f3f3f3] flex flex-col">
         <span className="mini text-[#808897] ">{chat?.sender}</span>

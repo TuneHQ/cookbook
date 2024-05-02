@@ -1,17 +1,12 @@
-import constants from "../contants";
+import constants from "../constants";
 import { TuneAIStream } from "../utils";
 import { StreamingTextResponse } from "ai";
 
 export async function POST(req: Request) {
-  const { prompt } = await req.json();
+  const { messages } = await req.json();
   const tuneResp = await TuneAIStream({
-    messages: [
-      {
-        role: "user",
-        content: prompt || "",
-      },
-    ],
-    model: "rohan/tune-gpt4",
+    messages: messages,
+    model: process.env.STUDIO_MODEL || "",
     stream: false,
     tools: constants.tools,
     temperature: 0.5,
