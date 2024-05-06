@@ -1,0 +1,474 @@
+@import url("https://use.typekit.net/bko1rkx.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "proxima-nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  @apply dark:text-dark-text-base dark:bg-dark-background-app bg-light-background-app  text-light-text-base h-screen w-screen antialiased overflow-hidden;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0px;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.addScrollBars::-webkit-scrollbar {
+  display: block !important;
+  width: 10px;
+}
+
+.activeMenuWrapper,
+.menuActive {
+  background: #eceff3 !important;
+}
+
+.activeWorkProfile {
+  background: #fff !important;
+  @apply border-light-border-base dark:border-dark-border-base border;
+}
+
+.dark .activeMenuWrapper,
+.dark .activeWorkProfile {
+  background: linear-gradient(
+      90deg,
+      rgba(126, 67, 255, 0) 0%,
+      rgba(244, 102, 193, 0.2) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(165, 117, 255, 0.2) 0%,
+      rgba(165, 117, 255, 0.2) 100%
+    ),
+    var(--bg-surface-container-low, #282828) !important;
+}
+
+.projectListing {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(333px, auto));
+  overflow: scroll;
+  padding-bottom: 64px !important;
+}
+
+.baseModelListing {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(256px, auto));
+  overflow: scroll;
+}
+
+p,
+span,
+div {
+  @apply antialiased;
+}
+
+:hover.playgroundInput .highlight {
+  @apply bg-light-background-surfaceLowHover dark:bg-dark-background-surfaceLowHover;
+}
+
+.playgroundInput .playgroundTrash {
+  display: none !important;
+}
+
+:hover.playgroundInput .playgroundTrash {
+  display: flex !important;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+
+.jsonContainer {
+  @apply bg-light-background-surfaceLow dark:bg-dark-background-surfaceLow font-mono text-[12px] font-[400];
+}
+
+.checkboxHolder {
+  @apply flex justify-center items-center;
+}
+
+.textBase {
+  @apply text-light-text-base dark:text-dark-text-base;
+}
+
+.textSub {
+  @apply text-light-text-subtle dark:text-dark-text-subtle;
+}
+
+.textMute {
+  @apply text-light-text-muted dark:text-dark-text-muted;
+}
+
+.borderBase {
+  @apply border-light-border-base dark:border-dark-border-base;
+}
+
+.interactiveBg {
+  background: linear-gradient(
+      180deg,
+      rgba(126, 67, 255, 0) 0%,
+      rgba(244, 102, 193, 0.2) 100%
+    ),
+    #6025e1;
+  box-shadow: 0px 0px 0px 1px rgba(72, 1, 228, 0.76),
+    0px 1px 2px 0px rgba(37, 17, 79, 0.4);
+}
+
+.bgSurface {
+  @apply bg-light-background-surface dark:bg-dark-background-surface;
+}
+
+.bgSurfaceHigh {
+  @apply bg-light-background-surfaceHigh dark:bg-dark-background-surfaceHigh;
+}
+
+.bgSurfaceLow {
+  @apply bg-light-background-surfaceLow dark:bg-dark-background-surfaceLow;
+}
+
+.bgSurfaceLowHover {
+  @apply bg-light-background-surfaceLowHover dark:bg-dark-background-surfaceLowHover;
+}
+
+.output .tooltip {
+  display: none !important;
+}
+
+.output:hover .tooltip {
+  display: inline-block !important;
+}
+
+.furyBg:hover {
+  opacity: 0.2;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #fff 38.099480867385864deg,
+    #67f6ff 87.83106923103333deg,
+    #41afff 258.75deg,
+    rgba(169, 151, 239, 0.7) 346.8750071525574deg
+  );
+}
+
+.langchainBg:hover {
+  opacity: 0.2;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #fff 38.099480867385864deg,
+    #67ff76 87.83106923103333deg,
+    #41ffbb 258.75deg,
+    rgba(169, 151, 239, 0.7) 346.8750071525574deg
+  );
+}
+
+.tuneSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+  @apply bg-light-background-control dark:bg-dark-background-control;
+}
+
+.tuneSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  background-image: url("/range-thumb.svg");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  margin-top: -6px;
+  -webkit-appearance: none;
+  /* box-shadow: -200px 0 0 200px #6025e0; */
+}
+
+.tuneSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  background-image: url("/range-thumb.svg");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.tuneSlider::-moz-range-progress {
+  @apply bg-light-background-interactiveHover dark:bg-dark-background-interactiveHover;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.tuneSlider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  -webkit-appearance: none;
+  /* overflow: hidden; */
+}
+
+@keyframes collapseIn {
+  0% {
+    min-width: 280px;
+    max-width: 280px;
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    min-width: 0px;
+    max-width: 0px;
+    width: 0%;
+    opacity: 0;
+  }
+}
+
+.collapseSidebar {
+  animation: collapseIn 0.2s forwards;
+  display: none !important;
+}
+
+@keyframes collapseOut {
+  0% {
+    min-width: 0px;
+    max-width: 0px;
+    width: 0%;
+    opacity: 0;
+  }
+  100% {
+    min-width: 280px;
+    max-width: 280px;
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.expandSidebar {
+  animation: collapseOut 0.2s forwards;
+}
+
+.renderCode,
+.renderCode pre {
+  @apply bg-light-background-surfaceLow dark:bg-dark-background-surfaceLow mini;
+}
+
+.renderCode pre code {
+  @apply bg-light-background-surfaceLow dark:bg-dark-background-surfaceLow text-[#ff6a1f!important] mini;
+}
+
+.renderCode pre {
+  @apply mini font-mono bg-light-background-surfaceLow dark:bg-dark-background-surfaceLow;
+}
+
+.renderCode .hljs-keyword {
+  @apply text-light-text-interactive dark:text-dark-text-interactive;
+}
+
+.renderCode .hljs-comment {
+  @apply text-light-text-muted dark:text-dark-text-muted;
+}
+
+.renderCode span {
+  @apply text-[#000] dark:text-[#fff];
+}
+
+.renderCode .hljs-attr {
+  @apply text-light-text-critical dark:text-dark-text-critical;
+}
+
+.renderCode .hljs-string {
+  @apply text-[#00A67D] dark:text-[#00A67D];
+}
+
+.renderCode .hljs-built_in {
+  @apply text-[#DF3079] dark:text-[#DF3079];
+}
+
+.renderCode .hljs-number {
+  @apply text-[#00A67D] dark:text-[#00A67D];
+}
+
+.apiHolder .bgInput {
+  box-shadow: none !important;
+}
+
+.borderInput {
+  @apply border-light-border-borderInput dark:border-dark-border-borderInput;
+}
+
+.playground .bgInput {
+  box-shadow: none !important;
+  border: 0px !important;
+}
+
+.playground .bgInput textarea {
+  padding: 0px !important;
+}
+
+.textCompleteText {
+  @apply medium;
+}
+
+.DraftEditor-root mark {
+  @apply bg-light-text-success/20 dark:bg-dark-text-success/20 textBase;
+}
+
+.DraftEditor-root,
+.DraftEditor-editorContainer,
+.public-DraftEditor-content {
+  @apply h-full;
+}
+
+.notranslate div {
+  overflow: auto;
+}
+
+.public-DraftStyleDefault-block {
+  pointer-events: none;
+}
+
+.playgroundUserCard .prose-nbx {
+  height: 100%;
+  max-height: none;
+  pointer-events: painted;
+}
+
+.shadowMd {
+  box-shadow: 0px 2px 4px 0px rgba(31, 33, 36, 0.05);
+}
+
+.dark .shadowMd {
+  box-shadow: 0px 2px 6px 0px rgba(9, 9, 9, 0.24);
+}
+
+.shadowLg {
+  box-shadow: 0px 2px 4px 0px rgba(31, 33, 36, 0.05),
+    0px 4px 12px 0px rgba(31, 33, 36, 0.06), 0px 2px 6px 0px rgba(9, 9, 9, 0.24);
+}
+
+.dark .shadowLg {
+  box-shadow: 0px 4px 16px 0px rgba(9, 9, 9, 0.5);
+}
+
+.changeLogHolder h1,
+.changeLogHolder h2,
+.changeLogHolder h3,
+.changeLogHolder h4,
+.changeLogHolder h5,
+.changeLogHolder h6 {
+  @apply mb-[8px] textBase medium-pl font-[600];
+}
+
+.changeLogHolder li {
+  @apply mb-[8px] textMute medium list-outside list-disc ml-[16px];
+}
+
+.changeLogHolder p,
+.changeLogHolder span {
+  @apply mb-[8px] textMute medium;
+}
+
+.changeLogHolder code {
+  @apply bg-light-background-interactive mini  text-dark-text-onColorr px-[4px];
+}
+
+.markdownHolder {
+  font-size: 16px;
+}
+
+.markdownHolder p {
+  @apply mb-[8px] regular;
+}
+
+.markdownHolder pre {
+  @apply medium font-mono rounded-md;
+}
+
+/* if p is inside li */
+.markdownHolder li p {
+  @apply mb-[0px] inline;
+}
+
+.markdownHolder ol {
+  @apply list-inside list-decimal;
+}
+
+.markdownHolder ul {
+  @apply list-inside list-disc;
+}
+
+.markdownHolder a {
+  @apply text-light-text-interactive dark:text-dark-text-interactive;
+}
+
+.markdownHolder th {
+  white-space: nowrap;
+  padding: 4px 8px;
+}
+
+ul {
+  list-style-type: disc;
+  margin-left: 14px;
+  @apply list-inside;
+}
+
+ol {
+  list-style-type: conic-gradient;
+  list-style: decimal;
+  margin-left: 16px;
+  @apply list-inside;
+}
+
+.monaco-editor-background,
+.margin-view-overlays {
+  @apply bg-light-background-input dark:bg-dark-background-input;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #ffffff;
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: inset 0 0 20px 20px #23232329;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #000;
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: inset 0 0 20px 20px #ffffff;
+}
+.isSkelton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+.dark .language-shell {
+  color: #fff !important;
+}
+
+.language-shell {
+  color: #000 !important;
+}
