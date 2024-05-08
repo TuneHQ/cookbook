@@ -125,7 +125,7 @@ async def get_response_tunestudio(prompt: str, matches: List[dict]):
             "role": "user",
             "content": prompt
         }],
-        "model": "rohan/llama-3-8b-instruct-16k",
+        "model": "rohan/Meta-Llama-3-8B-Instruct",
         "stream": True,
         "max_tokens": 300
     }
