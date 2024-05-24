@@ -6,10 +6,10 @@ import { useState, useRef, useEffect } from "react";
 import MessageCard from "./components/MessageCard";
 
 const faqs = [
-  "What is Tunehq.ai?",
-  "Tunehq.ai pricing?",
-  "Summarize tunehq.ai",
-  "Generate image of a llama",
+  "Can you suggest me a good restaurant?",
+  "What was my last order?",
+  "How much I spent on my last 3 orders?",
+  "I want to eat something spicy",
 ];
 
 export interface ChatInterface {

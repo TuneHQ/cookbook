@@ -3,23 +3,6 @@ const constants = {
     {
       type: "function",
       function: {
-        name: "search_web",
-        description: "Search the web using a query.",
-        parameters: {
-          type: "object",
-          properties: {
-            query: {
-              type: "string",
-              description: "The search query to use for searching the web.",
-            },
-          },
-          required: ["query"],
-        },
-      },
-    },
-    {
-      type: "function",
-      function: {
         name: "get_swiggy_orders",
         description: "Get the recent food orders from Swiggy.",
         parameters: {
