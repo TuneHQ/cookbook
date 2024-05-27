@@ -229,7 +229,7 @@ async function getSwiggyOrders() {
       orders +
       `Order Id: ${order?.order_id} [important]
     Order Total: ${order?.order_total}
-    Restaurant: ${order?.restaurant_name}
+    Restaurant: ${order?.restaurant_name} [important]
     Total Items: ${order?.order_items?.length}
     Address: ${order?.delivery_address?.address}
     Coupon Discount: ${order?.coupon_discount}
@@ -237,9 +237,9 @@ async function getSwiggyOrders() {
     Order Date: ${new Date(order?.order_time).toLocaleString()}
     Ordered Items: ${order?.order_items
       ?.map(
-        (val: any) => `${val?.quantity} x ${val?.name} - Rs${val?.final_price}`
+        (val: any) => `${val?.quantity} x ${val?.name} - Rs ${val?.final_price}`
       )
-      .join("\n")}
+      .join("\n")} [important]
     Delivery Partner: ${order?.delivery_boy?.name}
     Delivery Status: ${order?.order_delivery_status}
     \n---\n
