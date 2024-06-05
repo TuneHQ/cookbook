@@ -1,7 +1,7 @@
 Tune AI Cookbook 📚
 =================
 
-Welcome to the Tune AI Cookbook! This repository contains a collection of sample applications to help you get started with various AI and machine learning tasks using Tune AI's tools and APIs.
+Welcome to the Tune AI Cookbook! This repository contains a collection of sample applications to help you get started with various LLM tasks using Tune AI's [Studio](https://studio.tune.app?utm_source=github&utm_medium=repository&utm_campaign=cookbook) and [Chat](https://chat.tune.app?utm_source=github&utm_medium=repository&utm_campaign=cookbook) APIs.
 
 ## Table of Contents
 
@@ -13,7 +13,8 @@ Welcome to the Tune AI Cookbook! This repository contains a collection of sample
 
 ## Overview
 
-This cookbook provides a range of sample applications demonstrating different use cases and features of Tune AI. Each sample application comes with its own README file to help you understand and get started quickly.
+This cookbook provides a range of sample applications demonstrating different use cases and features of Tune Studio and Tune Chat.
+Each sample application comes with its own README file to help you understand and get started quickly.
 
 ## Getting Started
 
@@ -36,11 +37,15 @@ To get started with any of the sample applications, follow these steps:
 
 Here are some of the sample applications included in this repository:
 
-- [ChatApp](chatapp/README.md): A simple chat application demonstrating basic AI integration. 💬
-- [Function Calling (Swiggy)](function-calling-swiggy/README.md): An example of using AI for function calling in a food delivery context. 🍔
-- [Function Calling](function-calling/README.md): General-purpose function calling with AI. 🛠️
-- [Supabase RAG](supabase-rag/README.md): Integration with Supabase for real-time AI generation. ⚡
-- [Translator App](translator-app/README.md): A language translation application using AI. 🌐
+Sure, here is just the table for the sample applications:
+
+| Application | Description | Link |
+| ----------- | ----------- | ---- |
+| Chat App 💬 | A simple chat application demonstrating basic chat API integration. | [Chat App](chatapp/README.md) |
+| Function Calling (Swiggy) 🍔 | An example of using function calling to get your order history, nearby restaurant etc with swiggy (food delivery) app. | [Function Calling (Swiggy)](function-calling-swiggy/README.md) |
+| Function Calling 🛠️ | General-purpose function calling with Tune Studio. | [Function Calling](function-calling/README.md) |
+| Supabase RAG ⚡ | Integration with Supabase to build RAG agent | [Supabase RAG](supabase-rag/README.md) |
+| Translator App 🌐 | A language translation application using Tune Studio. | [Translator App](translator-app/README.md) |
 
 Each directory contains a README file with detailed instructions for setting up and running the application.
 
