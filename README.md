@@ -46,6 +46,7 @@ Sure, here is just the table for the sample applications:
 | Function Calling 🛠️ | General-purpose function calling with Tune Studio. | [Function Calling](function-calling/README.md) |
 | Supabase RAG ⚡ | Integration with Supabase to build RAG agent | [Supabase RAG](supabase-rag/README.md) |
 | Translator App 🌐 | A language translation application using Tune Studio. | [Translator App](translator-app/README.md) |
+| Notion Recipe Generator👌 | Recipe Generator using Tune Studio and Notion. | [Notion Recipe Generator](notion-recipe-generator/README.md) |
 
 Each directory contains a README file with detailed instructions for setting up and running the application.
 
