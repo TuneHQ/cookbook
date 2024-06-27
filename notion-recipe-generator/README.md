@@ -16,7 +16,12 @@ Notion Output:
 ![Chicken-Onion-Sandwich](./assets/notionImage.png)
 ---
 Demo: 
-![Chicken-Onion-Sandwich-Demo](./assets/notion-recipe-generator-demo.mp4)
+![](https://github.com/AsavariD/cookbook/assets/69451908/366359fe-0a57-4041-a6a2-2d8311e08e4e)
+
+
+https://github.com/AsavariD/cookbook/assets/69451908/366359fe-0a57-4041-a6a2-2d8311e08e4e
+
+
 ## Installation
 To install the dependencies in the requirements.txt file run the following command:
 ```
