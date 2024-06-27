@@ -13,7 +13,14 @@ python main.py --topic='give me a recipe using bread, chicken, onion' \
 
 Notion Output:
 
-![Chicken-Onion-Sandwich](/assets/notionImage.png)
+![Chicken-Onion-Sandwich](./assets/notionImage.png)
+---
+Demo: 
+![](https://github.com/AsavariD/cookbook/assets/69451908/366359fe-0a57-4041-a6a2-2d8311e08e4e)
+
+
+https://github.com/AsavariD/cookbook/assets/69451908/366359fe-0a57-4041-a6a2-2d8311e08e4e
+
 
 ## Installation
 To install the dependencies in the requirements.txt file run the following command:
