@@ -6,8 +6,9 @@ def create_chat_openai_instance(tuneai_api_key):
     return ChatOpenAI(
         openai_api_key=tuneai_api_key,
         base_url="https://proxy.tune.app/",
-        model="rohan/tune-grok-mixtral-8x7b",
+        model="rohan/mixtral-8x7b-inst-v0-1-32k",
     )
+
 
 def format_prompt(source_language, target_language, input_text):
     return ChatPromptTemplate.from_messages([
@@ -23,6 +24,3 @@ def translate(input_text, source_language, target_language, tuneai_api_key):
     chain = prompt | llm | output_parser
     response = chain.invoke({"input": input_text, "source_language": source_language, "target_language": target_language})
     return response
-
-
-    
