@@ -1,10 +1,10 @@
-# Translate app using TuneAI and Streamlit
+# Translator app using Tune Studio and Streamlit
 
-This repository contains the code for building a translator app that uses TuneStudio to integrate LangChain with the Mistral AI API and Streamlit for the front end. 
+This repository contains the code for building a translator app that uses Tune Studio to integrate LangChain with the Mistral AI API and Streamlit for the front end. 
 
 ## Running the application
 
-Clone this repository and navigate to the `translator-app` folder. In this folder run the following command to create a virtual environment: 
+Clone this repository and navigate to the `translator-app` folder. In this folder, run the following command to create a virtual environment: 
 
 ```
 python -m venv venv
@@ -28,4 +28,4 @@ Start the app by running the following command:
 streamlit run app.py
 ```
 
-The StreamLit app will launch in your browser. You can now enter your OpenAI API key and interact with the translation app. 
+The StreamLit app will launch in your browser. You can now enter your OpenAI API key and interact with the translator app. 
