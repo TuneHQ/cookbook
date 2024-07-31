@@ -6,8 +6,8 @@ import requests
 import json
 import fire
 
-NOTION_KEY = os.getenv("AUTH_TOKEN")
-TUNEAI_TOKEN = os.getenv("AI_KEY")
+NOTION_KEY = os.getenv("NOTION_KEY")
+TUNEAI_TOKEN = os.getenv("TUNEAI_API_KEY")
 SERPER_API_KEY = os.getenv("SERPER_KEY")
 
 notion_headers = {
@@ -24,7 +24,7 @@ def call_llm(messages):
     headers = {
         "Authorization": TUNEAI_TOKEN,
         "Content-Type": "application/json",
-        "X-Org-Id": "e41f60a3-06c9-4133-bc6d-127bc6f3f215",
+        # "X-Org-Id": "e41f60a3-06c9-4133-bc6d-127bc6f3f215",
     }
     data = {
         "temperature": 0.8,
@@ -54,12 +54,12 @@ def gen_recipe(dish_title, ingredients, num_ingredients):
             For example if the ingredients are almonds, flour, milk, eggs the output should be:
             Preheat your oven to 350°F (175°C).\nGrind almonds into a fine flour using a food processor or coffee grinder.
             \nIn a bowl, whisk together the almond flour, milk, and eggs until well combined.\nPour the mixture\ninto a baking dish.
-            \nBake for 25-30 minutes, or until the pudding is set and golden brown on top.\nLet it cool before serving. Enjoy!""",
+            \nBake for 25-30 minutes, or until the pudding is set and golden brown on top.\nLet it cool before serving. Enjoy!"""
         },
         {
             "role": "user",
-            "content": f"Generate a recipe for {dish_title} using {num_ingredients} ingredients which are {ingredients}",
-        },
+            "content": f"Generate a recipe for {dish_title} using {num_ingredients} ingredients which are {ingredients}"
+        }
     ]
 
     return call_llm(messages)
@@ -79,9 +79,9 @@ def gen_recipe_title(topic):
                 For example, if the ingredients are "chicken, garlic, lemon", a valid output could be:
 
                 Lemon Garlic Chicken
-                """,
+                """
         },
-        {"role": "user", "content": topic},
+        {"role": "user", "content": topic}
     ]
 
     return call_llm(messages)
@@ -95,9 +95,9 @@ def gen_num_ingredients(topic):
                 1. Only print the number of ingredients. 
                 2. The output should be a number.
                 2. Do not print title, steps and additional information. 
-                3. Do not print the word 'ingredients' and '.'""",
+                3. Do not print the word 'ingredients' and '.'"""
         },
-        {"role": "user", "content": topic},
+        {"role": "user", "content": topic}
     ]
 
     return call_llm(messages)
@@ -120,12 +120,12 @@ def gen_ingredient_list(topic):
                 Flour
                 Milk
 
-                Ensure that all provided ingredients are listed exactly as specified.""",
+                Ensure that all provided ingredients are listed exactly as specified."""
         },
         {
             "role": "user",
-            "content": f"Find ingredients from the following prompt: {topic}",
-        },
+            "content": f"Find ingredients from the following prompt: {topic}"
+        }
     ]
 
     return call_llm(messages)
@@ -138,13 +138,13 @@ def gen_description(dish_title, ingredients, recipe):
             "content": """You generate descriptions for recipes. Follow these rules strictly:
                 1. Do not add quotes to generated text. 
                 2. Keep the description brief and do not include the recipe steps. 
-                3. Limit the description length to 4-5 sentences.""",
+                3. Limit the description length to 4-5 sentences."""
         },
         {
             "role": "user",
             "content": f"""Generate a description for the dish with the following details. 
-            Dish name: {dish_title}, Ingredients needed: {ingredients} and Recipe: {recipe}""",
-        },
+            Dish name: {dish_title}, Ingredients needed: {ingredients} and Recipe: {recipe}"""
+        }
     ]
 
     return call_llm(messages)
@@ -159,7 +159,6 @@ def get_cover_image(dish_title):
     data = {"q": dish_title}
     response = requests.post(url, headers = serper_headers, json = data)
     response_data = response.json()
-    print(response_data)
     return response_data["images"][0]["imageUrl"]
 
 
@@ -200,7 +199,7 @@ def get_emoji(dish_title):
         {
             "role": "user",
             "content": f"I want one emoji for the dish titled {dish_title}. Choose one emoji from the list you have and return it.",
-        },
+        }
     ]
 
     return call_llm(messages)
@@ -229,7 +228,7 @@ def main(topic, page_id, model):
         "parent": {"page_id": page_id},
         "properties": {"title": [{"text": {"content": dish_title.strip()}}]},
         "cover": {"external": {"url": get_cover_image(dish_title)}},
-        "icon": {"emoji": get_emoji(dish_title)},
+        "icon": {"emoji": get_emoji(dish_title)}
     }
 
     response = requests.post(
@@ -237,6 +236,7 @@ def main(topic, page_id, model):
     )
 
     new_page_data = response.json()
+    print(new_page_data)
 
     data = {
         "children": [
@@ -247,7 +247,7 @@ def main(topic, page_id, model):
                     "rich_text": [
                         {"type": "text", "text": {"content": "Dish Description"}}
                     ]
-                },
+                }
             },
             {
                 "object": "block",
@@ -256,10 +256,10 @@ def main(topic, page_id, model):
                     "rich_text": [
                         {
                             "type": "text",
-                            "text": {"content": description.strip()},
+                            "text": {"content": description.strip()}
                         }
                     ]
-                },
+                }
             },
             {
                 "object": "block",
@@ -268,8 +268,8 @@ def main(topic, page_id, model):
                     "rich_text": [
                         {"type": "text", "text": {"content": "Ingredients List"}}
                     ]
-                },
-            },
+                }
+            }
         ]
     }
 
@@ -282,11 +282,11 @@ def main(topic, page_id, model):
                     "rich_text": [
                         {
                             "type": "text",
-                            "text": {"content": item.strip()},
+                            "text": {"content": item.strip()}
                         }
                     ]
-                },
-            },
+                }
+            }
         )
 
     data["children"].append(
@@ -295,8 +295,8 @@ def main(topic, page_id, model):
             "type": "heading_2",
             "heading_2": {
                 "rich_text": [{"type": "text", "text": {"content": "Recipe"}}]
-            },
-        },
+            }
+        }
     )
 
     for step in cleaned_steps:
@@ -306,14 +306,14 @@ def main(topic, page_id, model):
                 "type": "numbered_list_item",
                 "numbered_list_item": {
                     "rich_text": [{"type": "text", "text": {"content": step.strip()}}]
-                },
+                }
             }
         )
 
     response = requests.patch(
-        f"https://api.notion.com/v1/blocks/{new_page_data["id"]}/children",
+        f"https://api.notion.com/v1/blocks/{new_page_data['id']}/children",
         headers=notion_headers,
-        json=data,
+        json=data
     )
 
 
