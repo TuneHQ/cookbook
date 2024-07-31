@@ -12,7 +12,8 @@ app = FastAPI()
 
 
 class DocumentBody(BaseModel):
-    url : str = Field(..., title="URL of the website to extract data from")
+    url: str = Field(..., title="URL of the website to extract data from")
+
 
 class SearchBody(BaseModel):
     query: str
@@ -31,7 +32,9 @@ def read_root(document: DocumentBody):
 def resolve_prompt(prompt: SearchBody):
     prompt = prompt.query
     search = search_documents(prompt)
-    return StreamingResponse(get_response_tunestudio(prompt, search.data), media_type="text/event-stream")
+    return StreamingResponse(
+        get_response_tunestudio(prompt, search.data), media_type="text/event-stream"
+    )
 
 
 if __name__ == "__main__":
