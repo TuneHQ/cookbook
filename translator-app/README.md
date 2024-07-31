@@ -6,25 +6,25 @@ This repository contains the code for building a translator app that uses Tune S
 
 Clone this repository and navigate to the `translator-app` folder. In this folder, run the following command to create a virtual environment: 
 
-```
+```sh
 python -m venv venv
 ```
 
 Activate the virtual environment with the following command: 
 
-```
-source /venv/bin/activate
+```sh
+source venv/bin/activate
 ```
 
 Inside the virtual environment, install the required dependencies: 
 
-```
-pip install langchain streamlit
+```sh
+pip install langchain langchain-openai streamlit
 ```
 
 Start the app by running the following command: 
 
-```
+```sh
 streamlit run app.py
 ```
 
