@@ -1,15 +1,17 @@
 import streamlit as st
-import langchain_translator
+from translator import translate
 
-st.title('🟣 Tune Translator App')
+st.title('Tune Translator App')
 
 tuneai_api_key = st.sidebar.text_input('TuneAI API Key', type='password')
+
 
 with st.form('my_form'):
     user_text = st.text_area("Enter text to translate")
     source_language = st.selectbox("Select source language", ["english", "hindi", "french", "sanskrit", "spanish", "german"])
     target_language = st.selectbox("Select target language", ["english", "hindi", "french", "sanskrit", "spanish", "german"])
     submit_text = st.form_submit_button('Submit')
+
     if submit_text:
         if not tuneai_api_key.startswith('nbx'):
             st.warning('Please enter your TuneAI API key!', icon='⚠')
@@ -21,9 +23,7 @@ with st.form('my_form'):
             st.warning('Please select a source language!', icon='⚠')
         elif target_language == "":
             st.warning('Please select a target language!', icon='⚠')
-        else: 
+        else:
             # Call the translation function here
-            response = langchain_translator.translate(user_text, source_language, target_language, tuneai_api_key)
+            response = translate(user_text, source_language, target_language, tuneai_api_key)
             st.info(response)
-            
-        
