@@ -2,6 +2,8 @@
 
 This repository contains the code for building a translator app that uses Tune Studio to integrate LangChain with the Mistral AI API and Streamlit for the front end. 
 
+![Translator app](./assets/translator_app.png)
+
 ## Running the application
 
 Clone this repository and navigate to the `translator-app` folder. In this folder, run the following command to create a virtual environment: 
