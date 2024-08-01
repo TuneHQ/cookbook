@@ -86,7 +86,7 @@ $$;
 To start up the FastAPI server, navigate to the project's root directory and execute:
 
 ```bash
-uvicorn main:app --reload
+python main.py
 ```
 
 The server will be available at `http://localhost:8000`.
