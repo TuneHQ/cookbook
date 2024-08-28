@@ -47,6 +47,7 @@ Sure, here is just the table for the sample applications:
 | Supabase RAG ⚡ | Integration with Supabase to build RAG agent | [Supabase RAG](supabase-rag/README.md) |
 | Translator App 🌐 | A language translation application using Tune Studio. | [Translator App](translator-app/README.md) |
 | Notion Recipe Generator👌 | Recipe Generator using Tune Studio and Notion. | [Notion Recipe Generator](notion-recipe-generator/README.md) |
+| Interview Simulator 👔 | Smnart Interview Sim using Llama 3.1 and Streamlit. | [Interview Simulator](interview-simulator/README.md) |
 
 Each directory contains a README file with detailed instructions for setting up and running the application.
 
