@@ -227,3 +227,14 @@ zope.interface==7.0.3
 zope.lifecycleevent==5.0
 zope.proxy==5.3
 
+
+
+How to run the app
+0 clone the repo
+1 install dependencies 
+2 run orchestrator.py file 
+
+PS: You can add any English video (add videos of smaller duration as of now). from YouTube and update the url in download.py file and you are good to go 
+
+
+Happy Tuneing....(made with ♥️ on Tune.ai)
