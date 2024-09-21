@@ -1,13 +1,5 @@
 
 
-### 
-
-The application has 2 python file: cyber.py and mongoup.py 
-
-### cyber.py
-
-This is the client side or the user application which will display popup notification on cybersecurity best practices.
-
 # Tune AI PyCon India 2024 Contest
 
 ## Cyber Security Awareness via interactive popups
