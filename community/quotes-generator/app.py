@@ -14,7 +14,6 @@ if not API_KEY:
 
 @app.route('/api/quote', methods=['GET'])
 def get_quote():
-    print(API_KEY, "what is PAI key ")
     genre = request.args.get('genre', 'inspirational').lower()
     message = generate_motivational_message(genre)
     return jsonify({'quote': message})
@@ -24,7 +23,6 @@ def generate_motivational_message(genre):
     headers = {
         'Authorization': f'{API_KEY}',
         'Content-Type': 'application/json',
-        # 'X-Org-Id': f'{ORG_ID}'
     }
     prompt = f"Provide a {genre} motivational message."
 
@@ -47,7 +45,6 @@ def generate_motivational_message(genre):
     }
 
     try:
-        print(headers, "headers", payload, "payload", TUNESTUDI_API_URL, "key")
         response = requests.post(TUNESTUDI_API_URL, headers=headers, json=payload)
         response.raise_for_status()
         data = response.json()
