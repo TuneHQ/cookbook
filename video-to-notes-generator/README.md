@@ -1,7 +1,3 @@
-Here's a well-structured README for your GitHub project based on the provided information:
-
----
-
 # YouTube Video to Markdown Notes Converter
 
 This project allows you to take YouTube video links as input and automatically generate detailed notes in Markdown. It supports features like adding slides, creating transcripts, generating images for specific sections using Tune AI, and inserting timestamps linked directly to the YouTube video.
