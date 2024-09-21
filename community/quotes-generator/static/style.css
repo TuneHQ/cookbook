@@ -1,0 +1,35 @@
+css
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 50px;
+}
+
+h1 {
+    color: #333;
+}
+
+#quote {
+    font-size: 24px;
+    margin: 20px 0;
+    color: #555;
+}
+
+label {
+    font-size: 18px;
+}
+
+select {
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+button {
+    font-size: 16px;
+    margin-left: 10px;
+    padding: 5px 10px;
+}
+
+div {
+    margin-top: 20px;
+}

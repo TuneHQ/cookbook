@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Motivational Quote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Daily Motivational Quote</h1>
+    <div id="quote">
+        <!-- Quote will appear here -->
+    </div>
+    <div>
+        <label for="genre">Choose a genre:</label>
+        <select id="genre" name="genre">
+            <option value="inspirational">Inspirational</option>
+            <option value="movies">Movies</option>
+            <option value="books">Books</option>
+            <option value="ai">AI-Specific</option>
+        </select>
+        <button onclick="fetchQuote()">Get Quote</button>
+    </div>
+
+    <script>
+        function fetchQuote() {
+            const genreSelect = document.getElementById('genre');
+            const genre = genreSelect.value;
+            fetch(`/api/quote?genre=${genre}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const quoteDiv = document.getElementById('quote');
+                    quoteDiv.innerText = data.quote;
+                })
+                .catch(error => {
+                    console.error('Error fetching quote:', error);
+                    const quoteDiv = document.getElementById('quote');
+                    quoteDiv.innerText = 'Sorry, we could not retrieve a quote at this time.';
+                });
+        }
+    
+        // Fetch a quote when the page loads
+        window.onload = fetchQuote;
+    </script>
+    
+</body>
+</html>
