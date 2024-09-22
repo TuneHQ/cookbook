@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,19 +13,10 @@ import {
   Send,
   Menu,
   Plus,
+  Loader,
 } from "lucide-react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-
-type Chat = {
-  id: number;
-  name: string;
-};
-
-type Message = {
-  id: number;
-  content: string;
-  sender: "user" | "assistant";
-};
+import { Message, Thread } from "@/lib/types";
 
 export default function Dashboard() {
   const [messages, setMessages] = useState<Message[]>([
@@ -34,12 +25,39 @@ export default function Dashboard() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [chats, setChats] = useState<Chat[]>([
-    { id: 1, name: "Chat 1" },
-    { id: 2, name: "Chat 2" },
-    { id: 3, name: "Chat 3" },
-  ]);
-  const [selectedChat, setSelectedChat] = useState(1);
+  const [threads, setThreads] = useState<Thread[]>([]);
+  const [selectedThread, setSelectedThread] = useState(1);
+  const [threadListLoader, setThreadListLoader] = useState(false);
+
+  useEffect(() => {
+    setThreadListLoader(true);
+    // Fetch threads
+    fetch("/api/threads")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status) {
+          setThreads(data.data);
+        } else {
+          alert(data.message);
+        }
+      })
+      .finally(() => setThreadListLoader(false));
+  }, []);
+
+  useEffect(() => {
+    if (!selectedThread) return;
+    setThreadListLoader(true);
+    fetch(`/api/threads/${selectedThread}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status) {
+          setMessages(data.data.messages);
+        } else {
+          alert(data.message);
+        }
+      })
+      .finally(() => setThreadListLoader(false));
+  }, [selectedThread]);
 
   const handleSendMessage = () => {
     if (inputMessage.trim()) {
@@ -52,9 +70,13 @@ export default function Dashboard() {
   };
 
   const handleCreateNewChat = () => {
-    const newChat = { id: chats.length + 1, name: `Chat ${chats.length + 1}` };
-    setChats([...chats, newChat]);
-    setSelectedChat(newChat.id);
+    const newThread = {
+      id: threads.length + 1,
+      title: `Chat ${threads.length + 1}`,
+      createdAt: new Date().toLocaleString(),
+    };
+    setThreads([...threads, newThread]);
+    setSelectedThread(newThread.id);
     setMessages([]);
   };
 
@@ -77,10 +99,11 @@ export default function Dashboard() {
         {/* Sidebar - hidden on mobile */}
         <aside className="w-64 bg-muted/40 text-secondary-foreground p-4 hidden lg:block">
           <Sidebar
-            chats={chats}
-            selectedChat={selectedChat}
-            setSelectedChat={setSelectedChat}
+            threads={threads}
+            selectedThread={selectedThread}
+            setSelectedThread={setSelectedThread}
             handleCreateNewChat={handleCreateNewChat}
+            threadListLoader={threadListLoader}
           />
         </aside>
 
@@ -95,10 +118,11 @@ export default function Dashboard() {
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
                 <Sidebar
-                  chats={chats}
-                  selectedChat={selectedChat}
-                  setSelectedChat={setSelectedChat}
+                  threads={threads}
+                  selectedThread={selectedThread}
+                  setSelectedThread={setSelectedThread}
                   handleCreateNewChat={handleCreateNewChat}
+                  threadListLoader={threadListLoader}
                 />
               </SheetContent>
             </Sheet>
@@ -116,15 +140,17 @@ export default function Dashboard() {
 }
 
 function Sidebar({
-  chats,
-  selectedChat,
-  setSelectedChat,
+  threads,
+  selectedThread,
+  setSelectedThread,
   handleCreateNewChat,
+  threadListLoader,
 }: Readonly<{
-  chats: Chat[];
-  selectedChat: number;
-  setSelectedChat: (id: number) => void;
+  threads: Thread[];
+  selectedThread: number;
+  setSelectedThread: (id: number) => void;
   handleCreateNewChat: () => void;
+  threadListLoader: boolean;
 }>) {
   return (
     <div className="flex flex-col h-full">
@@ -141,19 +167,25 @@ function Sidebar({
       >
         <BookOpen className="mr-2 h-4 w-4" /> Manage Knowledge Base
       </Button>
-      <div className="px-4 py-2 mb-2 text-lg font-semibold">Manage Chats</div>
-      <ScrollArea className="flex-1 px-4">
-        {chats.map((chat) => (
-          <Button
-            key={chat.id}
-            variant={selectedChat === chat.id ? "secondary" : "ghost"}
-            className="w-full justify-start mb-2 text-muted-foreground transition-all hover:text-primary"
-            onClick={() => setSelectedChat(chat.id)}
-          >
-            <MessageSquare className="mr-2 h-4 w-4" /> {chat.name}
-          </Button>
-        ))}
-      </ScrollArea>
+      <div className="px-4 py-2 mb-2 text-lg font-semibold">Manage threads</div>
+      {threadListLoader ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      ) : (
+        <ScrollArea className="flex-1 px-4">
+          {threads.map((thread) => (
+            <Button
+              key={thread.id}
+              variant={selectedThread === thread.id ? "secondary" : "ghost"}
+              className="w-full justify-start mb-2 text-muted-foreground transition-all hover:text-primary"
+              onClick={() => setSelectedThread(thread.id)}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" /> {thread.title}
+            </Button>
+          ))}
+        </ScrollArea>
+      )}
       <Button onClick={handleCreateNewChat} className="m-4">
         <Plus className="mr-2 h-4 w-4" /> Create New Chat
       </Button>
