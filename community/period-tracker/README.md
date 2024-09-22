@@ -21,7 +21,7 @@ Period Tracker is a Discord bot designed to help anyone track their menstrual cy
 - **Tune Integration**: Utilize AI-powered summaries and intelligent prompts to enhance user interactions.
 
 ## Configuration
-Configure secretes by `mv .env.example .env.local`.
+Configure secretes by `mv sample.en .env.local`.
 Customize the bot's behavior by updating the `config.ts` file. Below is a sample configuration:
 
 ```typescript
