@@ -21,6 +21,7 @@ Period Tracker is a Discord bot designed to help anyone track their menstrual cy
 - **Tune Integration**: Utilize AI-powered summaries and intelligent prompts to enhance user interactions.
 
 ## Configuration
+
 Configure secretes by `mv sample.en .env.local`.
 Customize the bot's behavior by updating the `config.ts` file. Below is a sample configuration:
 
@@ -48,13 +49,12 @@ Period Tracker supports the following commands:
 
 ## Data Architecture
 
-The data architecture of Period Tracker is meticulously crafted to ensure efficient management and tracking of menstrual cycles and related entries. It employs a combination of SQLite for data storage, Zod for schema validation, and OpenAI tools for enhanced functionality.
+Simple data management to allow for even smaller llms to understand.
 
 ### 1. Database Setup
 
 #### **SQLite with Bun:sqlite**
 
-- **Database Choice**: Utilizes SQLite accessed via the `bun:sqlite` library, offering a lightweight and efficient relational database solution suitable for both production and testing environments.
 - **Database Instances**:
   - **Production Database**: `period.db`
   - **Test Database**: `test_period.db`
@@ -179,22 +179,6 @@ The data architecture of Period Tracker is meticulously crafted to ensure effici
 
 5. **Automated Monitoring**:
    - Cron jobs run at scheduled intervals to monitor data activity and prompt users as needed, ensuring timely and accurate data logging.
-
-### 7. Testing and Maintenance
-
-- **Test Database**: The `test_period.db` allows for safe testing of database operations without affecting production data.
-- **Data Reset Functions**: Functions like `clearprdandtestdb()` and `populateExampleData()` facilitate database maintenance and testing by allowing data to be cleared or pre-populated with example entries.
-
-### 8. Security and Data Integrity
-
-- **Schema Enforcement**: Utilizing Zod schemas ensures that only valid data is stored, maintaining the integrity of the database.
-- **Unique Identifiers**: Each cycle and entry is assigned a unique `id` to prevent duplication and ensure accurate data retrieval.
-- **Access Controls**: Integration with Discord interfaces and user lists (`discord_allowed_menstrual_users`) ensures that only authorized users can access and modify their data.
-
-### 9. Scalability Considerations
-
-- **Database Optimization**: Using `WAL` mode and proper indexing (e.g., on `startDate` and `endDate`) enhances database performance, especially as data volume grows.
-- **Modular Design**: The separation of production and test databases, along with modular functions, facilitates scalability and easier maintenance.
 
 ---
 
