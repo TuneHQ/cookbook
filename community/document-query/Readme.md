@@ -5,6 +5,11 @@ The application that I've built has a streamlit interface, which has 2 text boxe
 
 When a user enters query, the chunk is extracted and sent to tune studio to get the appropriate response.
 
+## Install requirements:
+```
+pip install -r requirements.txt
+```
+
 ## Steps to run:
 ### To run backend:
 ```

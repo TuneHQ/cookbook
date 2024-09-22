@@ -18,3 +18,5 @@ streamlit run streamlit_app.py
 
 ## Screenshot:
 ![alt text](./Application%20working%20image.png)
+![alt text](./Supabase%20Embeddings%20Image.png)
+![alt text](./Website%20Ingestion.png)
