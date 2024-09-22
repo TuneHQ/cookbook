@@ -1,6 +1,6 @@
 # Dell Chatbot - Laptop Buying Assistant
 
-This project is a Dell laptop recommendation chatbot. Users can interact with the chatbot to receive recommendations based on laptop specifications, details, and pricing. The chatbot utilizes function calling to fetch laptop specs, provide details on available models, and retrieve price information for specific laptops. We're using openai/o1-mini model for this project due to its price (open source) and performance.
+This project is a Dell laptop recommendation chatbot. Users can interact with the chatbot to receive recommendations based on laptop specifications, details, and pricing. The chatbot utilizes function calling to fetch laptop specs, provide details on available models, and retrieve price information for specific laptops. We're using openai/o1-mini model for this project due to its price and performance.
 
 
 ## Demo Video
