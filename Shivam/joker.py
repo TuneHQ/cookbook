@@ -15,7 +15,7 @@ def format_prompt( user_prompt):
     ("user", "{input}")
     ])
 
-def generate_code(user_prompt, tuneai_api_key):
+def joker_code(user_prompt, tuneai_api_key):
     llm = create_chat_openai_instance(tuneai_api_key)
     prompt = format_prompt(user_prompt)
     output_parser = StrOutputParser()
