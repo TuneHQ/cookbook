@@ -111,7 +111,7 @@ def prompt_transaction_calculation(transaction_prompt, client_prompt):
                 "content": client_prompt 
             }
         ],
-        "model": "openai/gpt-4o",
+        "model": "AnkurPhani/AP",
         "stream": False,
         "frequency_penalty": 0.2,
         "max_tokens": 500
