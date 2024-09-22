@@ -1,10 +1,10 @@
 import streamlit as st
-from generator import generate_code
-st.title('Code Generator App')
+from joker import joker_code
+st.title('I am a Comedian')
 
 tuneai_api_key = st.sidebar.text_input('TuneAI API Key', type='password')
 
-with st.form('code_generator_form'):
+with st.form('joke_form'):
     user_prompt = st.text_area("Enter your input")
 
 
@@ -17,5 +17,5 @@ if submit_button:
         st.warning('Please enter a prompt!', icon='⚠')
     else:
         with st.spinner('Generating code...'):
-            generated_code = generate_code(user_prompt, tuneai_api_key)
-            st.code(generated_code)
+            joke = joker_code(user_prompt, tuneai_api_key)
+            st.code(joke)
