@@ -4,6 +4,10 @@ MailGPT transforms your email experience into an interactive conversation. Chat 
 
 Feel free to tweak any part of it to better match your way!
 
+**Project Demo** - [https://youtu.be/kYOgZIuJwKc]
+
+---
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
