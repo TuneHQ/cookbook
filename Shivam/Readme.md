@@ -5,7 +5,7 @@ This repository contains the code for building a AI comedian  app that uses Tune
 
 ## Running the application
 
-Clone this repository and navigate to the `translator-app` folder. In this folder, run the following command to create a virtual environment: 
+Clone this repository and navigate to the `joker' folder. In this folder, run the following command to create a virtual environment: 
 
 ```sh
 python -m venv venv
@@ -26,7 +26,7 @@ pip install langchain langchain-openai streamlit
 Start the app by running the following command: 
 
 ```sh
-streamlit run app.py
+streamlit run test.py
 ```
 
 The StreamLit app will launch in your browser. You can now enter your OpenAI API key and interact with the translator app. 
