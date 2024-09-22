@@ -3,6 +3,7 @@
 ## Project Description
 
 In this project, enter the topic name to write an article about, later this can be integrated with web scrapper to get the trending topics and this will get fully automated.
+And this article will be sent to your slack channel.
 
 CLI command:
 

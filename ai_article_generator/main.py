@@ -8,6 +8,8 @@ load_dotenv()
 NOTION_KEY = os.getenv("NOTION_KEY")
 TUNEAI_TOKEN = os.getenv("TUNEAI_API_KEY")
 SERPER_API_KEY = os.getenv("SERPER_KEY")
+SLACK_URL = os.getenv("SLACK_URL")
+
 
 # Headers for API requests
 notion_headers = {
@@ -81,13 +83,13 @@ def main(topic, page_id, model):
     article_body = gen_article(topic, model)
 
     # Get cover image for article
-    cover_image = get_cover_image(article_title)
+    # cover_image = get_cover_image(article_title)
 
     # Create the article page in Notion
     data = {
         "parent": {"page_id": page_id},
         "properties": {"title": [{"text": {"content": article_title}}]},
-        "cover": {"external": {"url": cover_image}},
+        # "cover": {"external": {"url": cover_image}},
     }
 
     response = requests.post(
@@ -116,11 +118,26 @@ def main(topic, page_id, model):
     }
 
     # Append content to the Notion page
-    requests.patch(
-        f"https://api.notion.com/v1/blocks/{page_data['id']}/children",
-        headers=notion_headers,
-        json=article_content
-    )
+    # requests.patch(
+    #     f"https://api.notion.com/v1/blocks/{page_data['id']}/children",
+    #     headers=notion_headers,
+    #     json=article_content
+    # )
+
+    send_alert_to_slack(article_title + "\n" + article_body)
+
+
+def send_alert_to_slack(message):
+    payload = {
+        "text": message,
+        "username": "Alladin-Ka-Chirag",
+        "icon_emoji": ":genie:"
+    }
+    response = requests.post(SLACK_URL, json=payload)
+    if response.status_code == 200:
+        print("Message sent successfully")
+    else:
+        print(f"Failed to send message: {response.status_code} {response.text}")
 
 
 if __name__ == "__main__":
