@@ -19,7 +19,7 @@ GitHubGPT is your github analyser tool that utilizes the power of the TuneAI API
 
 ## Demo
 
-![](https://s4.ezgif.com/tmp/ezgif-4-dcbdff1c98.gif)
+![](https://raw.githubusercontent.com/Sayak9495/cookbook/refs/heads/main/community/github-analyzer/demo.gif)
 
 ## Usage
 
