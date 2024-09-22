@@ -1,8 +1,7 @@
-# Play tic tac toe
+# Ready for JOKE
 
-This repository contains the code for building a tic tac toe app that uses Tune Studio to integrate LangChain with the Tune studio API and Streamlit for the front end. 
+This repository contains the code for building a AI comedian  app that uses Tune Studio to integrate LangChain with the Tune studio API and Streamlit for the front end. 
 
-![Translator app](./assets/translator_app.png)
 
 ## Running the application
 
