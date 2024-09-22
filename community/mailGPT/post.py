@@ -27,7 +27,6 @@ def process_query(topic,user_query):
         print(f"From: {relevant_email['from']}")
         print(f"Similarity: {relevant_email['similarity']}\n")
     res_from_bot = run_tune_ai(str(relevant_emails_s),user_query)
-    # return f"Processed query: {user_query}"
     return res_from_bot
 
 @app.route('/api/query', methods=['POST'])

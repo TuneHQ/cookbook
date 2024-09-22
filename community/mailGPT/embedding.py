@@ -44,17 +44,5 @@ def retrieve_relevant_emails(query, emails_with_embeddings):
             email['similarity'] = sim  # Store the similarity score with the email
             relevant_emails.append(email)
 
-    # Sort emails by similarity score in descending order and return top 10
     relevant_emails.sort(key=lambda x: x['similarity'], reverse=True)
     return relevant_emails[:configuration.NUMBER_OF_EMAILS_FOR_RAG]
-
-# emails = load_email_data('data/gmail/test.json')
-# emails_with_embeddings = prepare_email_embeddings(emails)
-
-# query = "top linkedin emails"
-# relevant_emails = retrieve_relevant_emails(query, emails_with_embeddings)
-
-# for relevant_email in relevant_emails:
-#     print(f"Subject: {relevant_email['subject']}")
-#     print(f"From: {relevant_email['from']}")
-#     print(f"Similarity: {relevant_email['similarity']}\n")
