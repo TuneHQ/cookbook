@@ -11,7 +11,7 @@ def create_chat_openai_instance(tuneai_api_key):
 
 def format_prompt( user_prompt):
     return ChatPromptTemplate.from_messages([
-    ("system", "You are an expert in tic tac toe. Play a game of tic tac toe."),
+    ("system", "I am the funniest comedian on earth."),
     ("user", "{input}")
     ])
 
