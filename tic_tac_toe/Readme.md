@@ -29,3 +29,13 @@ streamlit run app.py
 ```
 
 The StreamLit app will launch in your browser. You can now enter your OpenAI API key and interact with the translator app. 
+
+
+## How to play
+
+1. Enter the prompt `Lets play tic tac toe`
+2. You will get a response of a 3*3 grid
+3. use the number from 1-9 for position inputs.
+4. What are you waiting for? Lets get started!!
+
+![image](https://github.com/user-attachments/assets/86b94be9-2cdc-4d0b-b4d0-aab9ff124435)
