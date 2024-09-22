@@ -13,6 +13,7 @@ Feel free to tweak any part of it to better match your way!
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Installation](#installation)
+- [Configuration](#configuration) 
 - [Usage](#usage)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -39,9 +40,25 @@ With MailGPT, you can easily navigate your emails, receive tailored responses, a
 
 Download and install Python 3 from the official [Python website](https://www.python.org/downloads/release/python-390/).
 
+### Step 2: Install Ollama
+ - Install Ollama with `llama3` model and run
+  ```bash
+  ollama run llama3
+  ```
+
+ - Pull `nomic-embed-text` model for generating email embeddings
+ ```bash
+ ollama pull nomic-embed-text
+ ```
+
 ### Step 2: Install Dependencies
  - Install all the dependencies using requirement.txt
- `pip install -r requirements.txt`
+ ```bash
+ pip install -r requirements.txt
+ ```
+
+## Configuration
+- Make relevant changes in the configuration.py for tweeking the configurations
 
 ## Usage
 

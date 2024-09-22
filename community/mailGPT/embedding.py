@@ -1,9 +1,10 @@
 import json
 import requests
 import numpy as np
+import configuration
 
 emails_with_embeddings = {}
-threshold = 0.4
+threshold = configuration.EMBEDDING_COSINE_SIMILARITY_THRESHOLD
 
 def load_email_data(file_path):
     with open(file_path, 'r') as file:
@@ -25,17 +26,17 @@ def prepare_email_embeddings(emails):
     return emails
 
 def cosine_similarity(a, b):
-    a = np.array(a)  # Ensure a is a numpy array
-    b = np.array(b)  # Ensure b is a numpy array
+    a = np.array(a)
+    b = np.array(b)
     return np.dot(a, b.T) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 def retrieve_relevant_emails(query, emails_with_embeddings):
-    query_embedding = get_embeddings(query)  # Assuming this function returns a numpy array
+    query_embedding = get_embeddings(query)
     if not query_embedding:
-        return []  # Handle cases where embeddings could not be fetched
+        return []
     relevant_emails = []
     for email in emails_with_embeddings:
-        email_embedding = email['embedding']  # Ensure this is a numpy array
+        email_embedding = email['embedding']
         if not email_embedding:
             continue  # Skip emails where embedding could not be fetched
         sim = cosine_similarity(query_embedding['embeddings'], email_embedding['embeddings'])
@@ -45,7 +46,7 @@ def retrieve_relevant_emails(query, emails_with_embeddings):
 
     # Sort emails by similarity score in descending order and return top 10
     relevant_emails.sort(key=lambda x: x['similarity'], reverse=True)
-    return relevant_emails[:10]
+    return relevant_emails[:configuration.NUMBER_OF_EMAILS_FOR_RAG]
 
 # emails = load_email_data('data/gmail/test.json')
 # emails_with_embeddings = prepare_email_embeddings(emails)

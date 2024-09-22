@@ -1,11 +1,11 @@
 import json
 import requests
-
+import configuration
 def run_tune_ai(user_content,query):
   stream = False
   url = "https://proxy.tune.app/chat/completions"
   headers = {
-      "Authorization": "<YOUR_AUTHORIZATION_KEY>",
+      "Authorization": configuration.TUNE_AI_AUTHORIZATION_KEY,
       "Content-Type": "application/json",
   }
   data = {
@@ -27,7 +27,7 @@ def run_tune_ai(user_content,query):
       "model": "openai/o1-mini",
       "stream": stream,
       "frequency_penalty":  0,
-      "max_tokens": 1000
+      "max_tokens": configuration.TUNE_AI_COMPLETIONS_ENDPOINT_MAX_TOKEN
   }
   response = requests.post(url, headers=headers, json=data)
   if stream:
