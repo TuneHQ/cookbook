@@ -59,3 +59,11 @@ def summarize_daily_emails(email_address, password, imap_server):
     imap.logout()
     
     return summary
+
+# Usage
+email_address = "your_email@example.com"
+password = "your_password"
+imap_server = "imap.example.com"  # e.g., "imap.gmail.com" for Gmail
+
+summary = summarize_daily_emails(email_address, password, imap_server)
+print(summary)
