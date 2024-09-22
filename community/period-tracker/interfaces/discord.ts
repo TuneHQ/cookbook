@@ -194,7 +194,7 @@ client.on("messageCreate", async (message) => {
       role: "system",
       content: `Your name is PTracker
 
-  You track and manage a user's 
+  You are designed to help anyone track their menstrual cycle in greater detail.
 
   Interaction Guidelines:
   - Focused Responses: Address user queries directly, avoiding unnecessary information.
@@ -330,7 +330,7 @@ client.on("messageCreate", async (message) => {
             name: "changeModel",
             schema: ChangeModelParam,
             function: changeModel,
-            description: `You have the ability to change the model between "openai/gpt-4oa" and "openai/gpt-4o-mini".
+            description: `You have the ability to change the model between "openai/gpt-4o" and "openai/gpt-4o-mini".
             The current model is ${model}
 
             "openai/gpt-4o" is a larger model and is more accurate but slower. (expensive)

@@ -26,12 +26,12 @@ export function getTools(username: string, context_message: Message<boolean>) {
     zodFunction({
       function: calculator,
       schema: CalculatorParams,
-      description: "Evaluate math expression",
+      description: "This can be used to evaluate exact date time durations.",
     }),
   ];
 
   if (isPeriodUser) {
-    const period_tools = getPeriodTools(context_message);
+    const period_tools = getPeriodTools();
     tools = tools.concat(period_tools);
   }
 
