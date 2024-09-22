@@ -5,7 +5,7 @@ This repository contains the code for building a AI comedian  app that uses Tune
 
 ## Running the application
 
-Clone this repository and navigate to the `joker' folder. In this folder, run the following command to create a virtual environment: 
+Clone this repository and navigate to the `Shivam' folder. In this folder, run the following command to create a virtual environment: 
 
 ```sh
 python -m venv venv
