@@ -123,7 +123,7 @@ def analyze_github_profile(user_query):
                 "content": prompt_content
             }
         ],
-        "model": "openai/gpt-4o-mini",
+        "model": "sayak9495/githubGPT-pycon",
         "stream": False,
         "max_tokens": 1200
     }
