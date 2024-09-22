@@ -68,5 +68,5 @@ class TuneAI:
 
 # Example usage:
 # tune_ai = TuneAI()
-# response = tune_ai.generate_content("hi everyone uh so in this presentation we're going to talk about F tuning llms and also something a bit more experimental called Model merging so at the end of the presentation you should have a good overview of all the main libraries to do fine tuning what's expected in terms of inputs what you're going to get in terms of outputs and also how to raise the quality of your model even further with model merging and we're going to see a lot of practical example that hopefully inspire you yeah um a bit about me so I'm indeed a staff machine learning scientist at liquid AI I'm also a gr developer expert I write blog post I've written the llm course on GitHub I've published a few uh models and data sets on Hing face and a few tools and also the author of Hands-On graph networks but also just announced a new book called the llm engineers uh handbook you might be.", "Hindi")
+# response = tune_ai.generate_content("what is the radius of sun")
 # print(response)
