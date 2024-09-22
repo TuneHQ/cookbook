@@ -13,7 +13,7 @@ with st.form('my_form'):
     submit_text = st.form_submit_button('Submit')
 
     if submit_text:
-        if not tuneai_api_key.startswith('nbx'):
+        if not tuneai_api_key.startswith('sk-tune'):
             st.warning('Please enter your TuneAI API key!', icon='⚠')
         elif source_language == target_language:
             st.warning('Source and target languages must be different!', icon='⚠')
