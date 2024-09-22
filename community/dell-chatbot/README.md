@@ -2,6 +2,11 @@
 
 This project is a Dell laptop recommendation chatbot. Users can interact with the chatbot to receive recommendations based on laptop specifications, details, and pricing. The chatbot utilizes function calling to fetch laptop specs, provide details on available models, and retrieve price information for specific laptops. We're using meta/llama-3.1-70b-instruct model for this project due to its price (open source) and performance.
 
+
+## Demo Video
+
+https://github.com/user-attachments/assets/3dc4c8b7-a714-4ee7-821e-2d12c36f20fb
+
 ## Initial Setup
 
 ### 1. Install Dependencies
@@ -40,10 +45,3 @@ The server will start on port 3000.
 - Find the price of a specific laptop model.
 - Ask for specs such as screen size, RAM, or storage for different models.
 
-
-## Demo Video
-
-<video width="600" controls controlslist="nodownload" allowfullscreen>
-  <source src="demo.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
