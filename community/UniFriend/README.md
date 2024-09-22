@@ -1,4 +1,4 @@
-# 📄 PDF Chatbot for finding university seats according to merit (v0.0.1)
+# 📄 UniFriend: PDF Chatbot for better Seat Selection(v0.0.1)
 
 This project is a full-stack Python application that allows users to interact with PDF documents— score card, seat matrix pdf and merit cuoff pdf —through a chat interface. The application leverages open-source technologies and integrates with advanced language models to provide insightful, conversational responses based on the content of uploaded PDFs.
 
