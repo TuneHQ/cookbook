@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+beautifulsoup4 = "*"
+requests = "*"
+python-dotenv = "*"
+supabase = "*"
+openai = "*"
+gpt3-tokenizer = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
