@@ -5,7 +5,7 @@ def run_tune_ai(user_content,query):
   stream = False
   url = "https://proxy.tune.app/chat/completions"
   headers = {
-      "Authorization": "sk-tune-iXTmtQmtRyEYYHIfuNywyHr89luzrmcEaqR",
+      "Authorization": "",
       "Content-Type": "application/json",
   }
   data = {
