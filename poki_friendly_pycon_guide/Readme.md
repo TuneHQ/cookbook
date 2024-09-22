@@ -40,7 +40,13 @@ Before running the app, you need to set up some environment variables. In your p
     SUPABASE_KEY=<your-supabase-project-key>
     OPENAI_API_KEY=<your-openai-api-key>
     ```
-4. Running the App
+4. Create your embeddings
+    ```code 
+    python generate_data.py
+    ```
+    This will create embeddings by scraping the website https://in.pycon.org/2024/ and https://in.pycon.org/cfp/2024/proposals/
+
+5. Running the App
 To start the Streamlit app, run:
 
     ```bash
