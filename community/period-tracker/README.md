@@ -1,6 +1,7 @@
 # Period Tracker
 
 Period Tracker is a Discord bot designed to help anyone track their menstrual cycle in greater detail and more observability for specific events.
+Try the bot out by [adding it](https://discord.com/oauth2/authorize?client_id=1287253133105430548&permissions=563347237972992&integration_type=0&scope=bot) to any server and sending a DM to the bot.
 
 ## Table of Contents
 
