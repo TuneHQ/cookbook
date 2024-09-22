@@ -1,0 +1,22 @@
+{
+  "name": "ptrack",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/node-cron": "^3.0.11",
+    "date-fns": "^4.1.0",
+    "discord.js": "^14.16.2",
+    "mathjs": "^13.1.1",
+    "node-cron": "^3.0.3",
+    "openai": "^4.63.0",
+    "yaml": "^2.5.1",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.3"
+  }
+}
