@@ -3,11 +3,11 @@
 This project is a full-stack Python application that allows users to interact with PDF documents— score card, seat matrix pdf and merit cuoff pdf —through a chat interface. The application leverages open-source technologies and integrates with advanced language models to provide insightful, conversational responses based on the content of uploaded PDFs.
 
 ## Why this problem statement 
-Recently my brother took admission in FE Engg. During his CAP rounds (MHT-CET 2024) we faced a lot of issues in seat selection. this is a small effort to create such application to help next generation in finding their suitable match.
+Recently my brother took admission in FE Engg. During his CAP rounds (MHT-CET 2024) we faced a lot of issues in seat selection. There were 6 pdfs of 2000+ pages each, by the end of round CAP round 3. 3 pdfs had seat matrix information, other 3 had merit cut-offs for the seats which seems very overwhelming for parents as well as students to crosscheck their rank against seat availability. This is a small effort to create such application to help next generation in finding their suitable match.
 
 
 ## Current Version :  v0.0.1
-The current application is capable of taking 2 pdf as input and answer questions based on the comparison. bsically analyse the score card and suggest college according to score.
+The current application is capable of taking 2 pdf as input and answer questions based on the comparison. basically analyse the score card and suggest college according to score.
 
 ## Next Steps :
 - v0.0.2 will have more efficient parsing marsheet/score card and cutoff pdf to find the suitable seat for candidate 
@@ -56,7 +56,7 @@ The current application is capable of taking 2 pdf as input and answer questions
 
 ### Installation Steps
 
-1. **Clone the Repository** (yet to init this repo)
+1. **Clone the Repository** (yet to init. this repo)
 
    ```bash
    git clone https://github.com/yourusername/pdf-chatbot.git
