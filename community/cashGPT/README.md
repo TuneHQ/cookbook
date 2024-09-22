@@ -29,4 +29,4 @@ Tracking your UPI transactions is a hassle. CashGPT helps you analyze your trans
 
 ## Snippet of Working
 
-![Working Demo](https://s1.ezgif.com/tmp/ezgif-1-592f7c7cd0.gif)
+![Working Demo](https://github.com/phaniankur/cookbook/blob/main/community/cashGPT/demo.gif)
