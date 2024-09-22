@@ -47,3 +47,8 @@ When the program is executed, it will send the user converation to the tune API 
 
 8.  **Assistant**: Appointment has been successfully booked for September 24, 11:30 to 12:30.
 
+### 4\. How To Run the Project
+Run the code after cloning the branch 
+```bash 
+    streamlit run app.py
+```
