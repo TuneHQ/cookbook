@@ -24,7 +24,7 @@ def run_tune_ai(user_content,query):
       "content": query
     }
   ],
-      "model": "openai/o1-mini",
+      "model": "mailgun/mailGPT",
       "stream": stream,
       "frequency_penalty":  0,
       "max_tokens": configuration.TUNE_AI_COMPLETIONS_ENDPOINT_MAX_TOKEN
