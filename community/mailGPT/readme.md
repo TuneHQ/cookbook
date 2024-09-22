@@ -54,6 +54,7 @@ Once the environment is set up, you can run MailGPT by providing a .mbox file du
 ```bash
 python3 mbox_to_json.py
 ```
+- Replace your `YOUR_AUTHORIZATION_KEY` for tune AI
 - Then start the server by running below python script
 ```bash
 python3 post.py
