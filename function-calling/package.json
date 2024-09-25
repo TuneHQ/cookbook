@@ -15,7 +15,7 @@
     "eventsource-parser": "^1.1.2",
     "jsdom": "^24.0.0",
     "llama-tokenizer-js": "^1.2.1",
-    "next": "14.2.3",
+    "next": "14.2.10",
     "node-fetch": "^3.3.2",
     "react": "^18",
     "react-dom": "^18",
