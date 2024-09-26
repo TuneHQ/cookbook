@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MailGPT | Ask You Mail Anything!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .chat-container {
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            padding: 0;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #667eea;
+            padding: 15px;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .pulsating {
+        display: inline-block;
+        animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+
+        .topic-input {
+            padding: 10px;
+            background-color: #e8e8e8;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topic-input input {
+            width: 80%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .text {
+            padding: 10px 15px;
+            max-width: 70%;
+            font-size: 14px;
+            word-wrap: break-word;
+            border-radius: 18px;
+            margin: 5px;
+        }
+
+        .message.user .text {
+            background-color: #667eea;
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+
+        .message.bot .text {
+            background-color: #e0e0e0;
+            color: #333;
+            border-bottom-left-radius: 0;
+        }
+
+        .chat-footer {
+            background-color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #ddd;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            outline: none;
+            margin-right: 10px;
+        }
+
+        .chat-button {
+            background-color: #667eea;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background-color: #764ba2;
+        }
+
+        /* Hide scrollbar on Chrome, Safari and Opera */
+        .chat-box::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar on IE, Edge and Firefox */
+        .chat-box {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Custom styles for offers */
+        .offer {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f0f8ff;
+        }
+
+        .offer h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .offer p {
+            margin: 5px 0;
+        }
+
+        .recommendation {
+            font-weight: bold;
+            color: #ff6347;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        MailGPT 1.0
+    </div>
+
+    <!-- Topic input area -->
+    <div class="topic-input">
+        <input type="text" id="topic" placeholder="Any topic in mind? (e.g., Offers)">
+    </div>
+
+    <!-- Chat box to display conversation -->
+    <div class="chat-box" id="chat-box">
+        <!-- Dynamic chat content will appear here -->
+    </div>
+
+    <!-- Footer with input and button -->
+    <div class="chat-footer">
+        <input type="text" id="question" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') askQuestion()">
+        <button class="chat-button" onclick="askQuestion()">&#10148;</button>
+    </div>
+</div>
+
+<script>
+    async function askQuestion() {
+        var topic = document.getElementById('topic').value;
+        var question = document.getElementById('question').value;
+        var chatBox = document.getElementById('chat-box');
+
+        if (topic.trim() === "") {
+            alert('Please enter a topic!');
+            return;
+        }
+
+        if (question.trim() === "") {
+            alert('Ask you mail anything!');
+            return;
+        }
+
+        // Create user message bubble
+        var userMessage = document.createElement('div');
+        userMessage.classList.add('message', 'user');
+        userMessage.innerHTML = '<div class="text">' + question + '</div>';
+        chatBox.appendChild(userMessage);
+
+        // Create bot "thinking" message bubble with pulsating effect
+        var botMessage = document.createElement('div');
+        botMessage.classList.add('message', 'bot');
+        botMessage.innerHTML = '<div class="text pulsating">...</div>';  // Pulsating class here
+        chatBox.appendChild(botMessage);
+
+        // Scroll to bottom after new message
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Clear question input field after submission
+        document.getElementById('question').value = '';
+
+        try {
+            // Make the API call with the topic and question
+            const response = await fetch('http://127.0.0.1:5000/api/query', { // Replace with your API endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    topic: topic,
+                    query: question
+                })
+            });
+
+            const data = await response.json(); // Assuming the API returns JSON
+
+            // Parse and format the response text
+            const offersHTML = parseOffers(data.response);
+            botMessage.innerHTML = '<div class="text">' + offersHTML + '</div>';
+        } catch (error) {
+            // Handle any errors from the API request
+            console.log(error)
+            botMessage.innerHTML = '<div class="text">Sorry, I crapped out. Please reach to the dev.</div>';
+        }
+
+        // Scroll down after the bot response
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function parseOffers(responseText) {
+        const offers = responseText.split(/(\d+\.\s)/).filter(Boolean);
+        let formattedOffers = '';
+
+        for (let i = 1; i < offers.length; i += 2) {
+            const title = offers[i].trim();
+            const details = offers[i + 1].trim();
+            formattedOffers += `
+                <div class="offer">
+                    <h3>${title}</h3>
+                    <p>${details.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>
+                </div>
+            `;
+        }
+
+        // Append recommendation if it exists
+        const recommendationMatch = responseText.match(/Recommendation:\s*(.*)/);
+        if (recommendationMatch) {
+            formattedOffers += `<div class="recommendation">${recommendationMatch[1]}</div>`;
+        }
+
+        return formattedOffers;
+    }
+</script>
+
+</body>
+</html>
