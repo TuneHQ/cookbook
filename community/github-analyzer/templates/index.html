@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GithubGPT 🦾</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3e6ff; /* Light purple background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .chat-header {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #5d3fd3; /* Heading color */
+        }
+        .chat-box {
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            word-wrap: break-word; /* Ensures long words or sentences wrap within the box */
+            white-space: pre-wrap;   /* Allows the content to wrap inside the box */
+        } 
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            width: -webkit-fill-available;
+        }
+        .send-button {
+            background-color: #5d3fd3;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .loader {
+            display: none;
+            margin: 10px auto;
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #5d3fd3; /* Purple */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite; /* Animation */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            margin-bottom: 10px;
+            word-wrap: break-word;  /* Ensures the message text wraps inside the container */
+            overflow-wrap: break-word; /* Ensures long words break and wrap */
+            white-space: pre-wrap; /* Preserves formatting like newlines */
+        }
+        .bot {
+            color: #5d3fd3;
+            font-weight: bold;
+        }
+        .language-markdown {
+            flex: auto;
+            display: flex;
+            overflow-wrap: break-word; /* Allows long words to wrap */
+            word-wrap: break-word;     /* Ensures long words break and wrap */
+            white-space: pre-wrap;     /* Preserves whitespace and wraps */
+        }
+        .language-markdown pre {
+            margin: 0;                /* Remove default margin */
+            overflow: auto;           /* Allow overflow for other reasons, but we will wrap */
+        }
+        .language-markdown code {
+            white-space: pre-wrap;    /* Preserve newlines and wrap */
+            overflow-wrap: break-word; /* Allows long words to wrap */
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">GithubGPT 🤖</div>
+        <div id="chat-box" class="chat-box"></div>
+        <div id="loader" class="loader"></div>
+        <input id="chat-input" type="text" class="chat-input" placeholder="Type your github-analyze query - 'Should I hire sayak9495 for ruby dev role?'" autocomplete="off">
+        <button id="send-button" class="send-button">Send</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.getElementById("send-button").addEventListener("click", function() {
+            sendMessage();
+        });
+
+        document.getElementById("chat-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const chatBox = document.getElementById("chat-box");
+            const userMessage = document.getElementById("chat-input").value;
+            if (!userMessage) return;
+            
+            // Display user message in chat
+            const userMessageElement = document.createElement("div");
+            userMessageElement.classList.add("message");
+            userMessageElement.innerHTML = `<strong>You:</strong> ${userMessage}`;
+            chatBox.appendChild(userMessageElement);
+            
+            // Clear the input field
+            document.getElementById("chat-input").value = "";
+            
+            // Scroll chat to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Show loader
+            document.getElementById("loader").style.display = "block";
+
+            // Send user message to the server
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Convert markdown response to HTML
+                const formattedResponse = marked.parse(data.response);
+                
+                // Display bot response in chat
+                const botMessageElement = document.createElement("div");
+                botMessageElement.classList.add("message", "bot");
+                botMessageElement.innerHTML = `<strong>GithubGPT:</strong> ${formattedResponse}`;
+                chatBox.appendChild(botMessageElement);
+
+                // Scroll chat to bottom
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // Hide loader
+                document.getElementById("loader").style.display = "none";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide loader in case of error
+                document.getElementById("loader").style.display = "none";
+            });
+        }
+    </script>
+</body>
+</html>
