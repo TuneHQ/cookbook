@@ -1,0 +1,9 @@
+fastapi==0.110.2
+uvicorn==0.29.0
+beautifulsoup4==4.12.3
+requests==2.32.2
+python-dotenv==1.0.1
+supabase==2.4.3
+openai==1.23.3
+gpt3-tokenizer==0.1.4
+streamlit
