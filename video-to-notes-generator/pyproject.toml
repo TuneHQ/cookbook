@@ -1,0 +1,90 @@
+[tool.poetry]
+name = "lecture note generator"
+version = "0.1.0"
+description = ""
+authors = ["legedith <jatindehmiwal@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.11"
+google-generativeai = "^0.7.2"
+python-dotenv = "^1.0.1"
+openai-whisper = { git = "https://github.com/openai/whisper.git", rev = "v20231117" }
+numpy = "<2.0.0"
+torchvision = "0.19.0+cu124"
+torch = "2.4.0+cu124"
+pytesseract = "^0.3.13"
+yt-dlp = "^2024.8.6"
+logger = "^1.4"
+beautifulsoup4 = "^4.12.3"
+markdown = "^3.7"
+nltk = "^3.9.1"
+transformers = "^4.44.2"
+fuzzywuzzy = "^0.18.0"
+python-levenshtein = "^0.25.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = [
+    "F",
+    "E",
+    "W",
+    "C90",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "YTT",
+    "ANN",
+    "B",
+    "A",
+    "COM",
+    "C4",
+    "DTZ",
+    "ISC",
+    "ICN",
+    "INP",
+    "PIE",
+    "PT",
+    "RET",
+    "SIM",
+    "TID",
+    "ARG",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "RUF",
+]
+ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D107",
+    "D203",
+    "D212",
+    "UP006",
+    "UP007",
+    "ANN101",
+    "ANN102",
+    "D400",
+    "D406",
+    "D407",
+    "PLC1901",
+    "UP035",
+    "ANN001",
+]
+unfixable = ["F401", "F841"]
+
+[tool.ruff.per-file-ignores]
+"test_*.py" = ["ANN001", "ANN002", "ANN003", "D103"]
+
+[tool.ruff.pyupgrade]
+keep-runtime-typing = true
